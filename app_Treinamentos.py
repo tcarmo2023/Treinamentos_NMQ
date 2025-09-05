@@ -595,7 +595,7 @@ def main():
             with col1:
                 treinamento = st.selectbox("Treinamento*", BASE_TREINAMENTO)
                 classificacao_tecnico = st.selectbox("Classificação do Técnico*", CLASSIFICACAO_TECNICO)
-                nivel_tecnico = st.selectbox("Nível*", NIVEL_TREinamento)
+                nivel_tecnico = st.selectbox("Nível*", NIVEL_TREINAMENTO)
                 situacao = st.selectbox("Situação*", BASE_SITUACAO)
                 categoria = st.selectbox("Categoria*", list(BASE_CATEGORIA.keys()))
             with col2:
