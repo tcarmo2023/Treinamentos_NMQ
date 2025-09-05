@@ -821,8 +821,8 @@ def main():
     # Informações de contato
     st.markdown(
         f"<div style='text-align: center; font-size: 11px; color: #666; margin-top: 10px;'>"
-        f"Criado por Thiago Carmo - Especialista em Dados • "
-        f"Qualquer oportunidade entre em contato: (81) 99514-3900</div>",
+        f"Desenvolvido por Thiago Carmo – Especialista em Dados • "
+        f"📞 (81) 99514-3900</div>",
         unsafe_allow_html=True
     )
 
