@@ -53,17 +53,20 @@ def get_brasilia_time():
     return datetime.now(brasilia_tz)
 
 # Dados fixos
-BASE_FUNCAO = [
-    "Auxiliar Técnico 40h",
-    "Formação JTC", 
+CLASSIFICACAO_TECNICO = [
+    "Mecânico I",
+    "Mecânico II", 
     "JTC",
-    "Técnico 160h",
+    "Auxiliar de Mecânico",
+    "Mecânico Champion"
+]
+
+NIVEL_TREINAMENTO = [
+    "Auxiliar Técnico 40h",
+    "Técnico 160h", 
     "Técnico Diagnóstico 120h",
     "Técnico Master",
-    "Mecânico I", 
-    "Mecânico II", 
-    "Auxiliar de Mecânico", 
-    "Mecânico Champion"
+    "Formação JTC"
 ]
 
 BASE_CATEGORIA = {
@@ -82,14 +85,9 @@ BASE_CATEGORIA = {
 
 # Níveis das categorias - AGORA BASEADO NA CLASSIFICAÇÃO DO TÉCNICO
 CATEGORIA_NIVEIS = {
-    "Auxiliar Técnico 40h": "Auxiliar Técnico 40h",
-    "Formação JTC": "Formação JTC",
-    "JTC": "JTC",
-    "Técnico 160h": "Técnico 160h",
-    "Técnico Diagnóstico 120h": "Técnico Diagnóstico 120h",
-    "Técnico Master": "Técnico Master",
     "Mecânico I": "Técnico 160h",
-    "Mecânico II": "Técnico 160h",
+    "Mecânico II": "Técnico 160h", 
+    "JTC": "JTC",
     "Auxiliar de Mecânico": "Auxiliar Técnico 40h",
     "Mecânico Champion": "Técnico Master"
 }
@@ -120,7 +118,7 @@ BASE_REVENDA = ["Recife", "N Natal", "Fortaleza", "Petrolina"]
 # Matriz de tipos de treinamento com níveis, status e CLASSIFICAÇÃO
 MATRIZ_TREINAMENTOS = {
     "Integração - 8h": {
-        "classificação": "Auxiliar Técnico 40h",
+        "classificação": "Auxiliar de Mecânico",
         "nível": "Auxiliar Técnico 40h",
         "status": [
             "História e Evolução JCB",
@@ -130,7 +128,7 @@ MATRIZ_TREINAMENTOS = {
         ]
     },
     "Tecnologias - 8h": {
-        "classificação": "Auxiliar Técnico 40h",
+        "classificação": "Auxiliar de Mecânico",
         "nível": "Auxiliar Técnico 40h", 
         "status": [
             "Hidráulica / Elétrica",
@@ -140,7 +138,7 @@ MATRIZ_TREINAMENTOS = {
         ]
     },
     "Condução Máquinas - 8h": {
-        "classificação": "Auxiliar Técnico 40h",
+        "classificação": "Auxiliar de Mecânico",
         "nível": "Auxiliar Técnico 40h",
         "status": [
             "Segurança",
@@ -149,7 +147,7 @@ MATRIZ_TREINAMENTOS = {
         ]
     },
     "Sistema Operacional Produtos Nacionais / Importados - 8h": {
-        "classificação": "Auxiliar Técnico 40h",
+        "classificação": "Auxiliar de Mecânico",
         "nível": "Auxiliar Técnico 40h",
         "status": [
             "Testes Funcionamento",
@@ -160,7 +158,7 @@ MATRIZ_TREINAMENTOS = {
         ]
     },
     "PMP - 8h": {
-        "classificação": "Auxiliar Técnico 40h",
+        "classificação": "Auxiliar de Mecânico",
         "nível": "Auxiliar Técnico 40h",
         "status": [
             "Tipos de Manutenção",
@@ -171,7 +169,7 @@ MATRIZ_TREINAMENTOS = {
         ]
     },
     "Conjunto Motriz - JCB - 40h": {
-        "classificação": "Técnico 160h",
+        "classificação": "Mecânico I",
         "nível": "Técnico 160h",
         "status": [
             "Desmontagem e Montagem",
@@ -182,7 +180,7 @@ MATRIZ_TREINAMENTOS = {
         ]
     },
     "Motores - JCB - 40h": {
-        "classificação": "Técnico 160h",
+        "classificação": "Mecânico I",
         "nível": "Técnico 160h",
         "status": [
             "Tipos - Conv. Eletrônico",
@@ -192,7 +190,7 @@ MATRIZ_TREINAMENTOS = {
         ]
     },
     "Sistemas Eletro - Hidráulicos THL e BHL - 40h": {
-        "classificação": "Técnico 160h",
+        "classificação": "Mecânico I",
         "nível": "Técnico 160h",
         "status": [
             "Conjuntos Motrizes",
@@ -202,7 +200,7 @@ MATRIZ_TREINAMENTOS = {
         ]
     },
     "Sistemas Eletro - Hidráulicos WLS e EXC - 40h": {
-        "classificação": "Técnico 160h",
+        "classificação": "Mecânico I",
         "nível": "Técnico 160h", 
         "status": [
             "Conjuntos Motrizes",
@@ -212,7 +210,7 @@ MATRIZ_TREINAMENTOS = {
         ]
     },
     "Diagnóstico Powetrain JCB - 40h": {
-        "classificação": "Técnico Diagnóstico 120h",
+        "classificação": "Mecânico II",
         "nível": "Técnico Diagnóstico 120h",
         "status": [
             "Motores",
@@ -221,7 +219,7 @@ MATRIZ_TREINAMENTOS = {
         ]
     },
     "Diagnóstico Sistemas Eletro-Hidráulicos Nacional - 40h": {
-        "classificação": "Técnico Diagnóstico 120h",
+        "classificação": "Mecânico II",
         "nível": "Técnico Diagnóstico 120h",
         "status": [
             "Mant. Componentes",
@@ -231,7 +229,7 @@ MATRIZ_TREINAMENTOS = {
         ]
     },
     "Diagnóstico Sistemas Eletro-Hidráulicos Importados - 40h": {
-        "classificação": "Técnico Diagnóstico 120h",
+        "classificação": "Mecânico II",
         "nível": "Técnico Diagnóstico 120h",
         "status": [
             "Mant. Componentes",
@@ -241,8 +239,8 @@ MATRIZ_TREINAMENTOS = {
         ]
     },
     "JTC": {
-        "classificação": "Técnico Master",
-        "nível": "Técnico Master",
+        "classificação": "JTC",
+        "nível": "Formação JTC",
         "status": [
             "Atualização Técnica",
             "Experiência Comprovada",
@@ -253,45 +251,45 @@ MATRIZ_TREINAMENTOS = {
 }
 
 BASE_COLABORADORES = [
-    {"Colaborador": "Ivanildo Benvindo", "Classificação": "Mecânico I", "Unidades": "Recife",
+    {"Colaborador": "Ivanildo Benvindo", "Classificação": "Mecânico I", "Nível": "Técnico 160h", "Unidades": "Recife",
      "Email": "ivanildo.benvindo@normaq.com.br", "Telefone": "+55 81 9119-9240"},
-    {"Colaborador": "Luiz Guilherme", "Classificação": "Mecânico II", "Unidades": "Recife",
+    {"Colaborador": "Luiz Guilherme", "Classificação": "Mecânico II", "Nível": "Técnico 160h", "Unidades": "Recife",
      "Email": "guilherme.santos@normaq.com.br", "Telefone": "+55 81 9786-0555"},
-    {"Colaborador": "Jesse Pereira", "Classificação": "Mecânico II", "Unidades": "Recife",
+    {"Colaborador": "Jesse Pereira", "Classificação": "Mecânico II", "Nível": "Técnico 160h", "Unidades": "Recife",
      "Email": "jesse.pereira@normaq.com.br", "Telefone": "+55 81 9200-9598"},
-    {"Colaborador": "Clemerson Jose", "Classificação": "Mecânico I", "Unidades": "Recife",
+    {"Colaborador": "Clemerson Jose", "Classificação": "Mecânico I", "Nível": "Técnico 160h", "Unidades": "Recife",
      "Email": "clemeson.jose@normaq.com.br", "Telefone": "+55 81 8942-1435"},
-    {"Colaborador": "Leandro Tenorio", "Classificação": "Mecânico I", "Unidades": "Recife",
+    {"Colaborador": "Leandro Tenorio", "Classificação": "Mecânico I", "Nível": "Técnico 160h", "Unidades": "Recife",
      "Email": "leandro.tenorio@normaq.com.br", "Telefone": "+55 81 9847-0771"},
-    {"Colaborador": "Roberto Gomes", "Classificação": "Mecânico I", "Unidades": "Recife",
+    {"Colaborador": "Roberto Gomes", "Classificação": "Mecânico I", "Nível": "Técnico 160h", "Unidades": "Recife",
      "Email": "roberto.gomes@normaq.com.br", "Telefone": "+55 81 8621-6679"},
-    {"Colaborador": "Rodolfo Monteiro", "Classificação": "Mecânico II", "Unidades": "Recife",
+    {"Colaborador": "Rodolfo Monteiro", "Classificação": "Mecânico II", "Nível": "Técnico 160h", "Unidades": "Recife",
      "Email": "rodolfo.monteiro@normaq.com.br", "Telefone": "+55 81 7330-9016"},
-    {"Colaborador": "Sergio Gomes", "Classificação": "JTC", "Unidades": "Recife",
+    {"Colaborador": "Sergio Gomes", "Classificação": "JTC", "Nível": "Formação JTC", "Unidades": "Recife",
      "Email": "sergio.gomes@normaq.com.br", "Telefone": "+55 81 9247-3552"},
-    {"Colaborador": "Icaro Cruz", "Classificação": "Mecânico I", "Unidades": "Natal",
+    {"Colaborador": "Icaro Cruz", "Classificação": "Mecânico I", "Nível": "Técnico 160h", "Unidades": "Natal",
      "Email": "icaro.cruz@normaq.com.br", "Telefone": "+55 84 9115-1029"},
-    {"Colaborador": "Jeorge Rodrigues", "Classificação": "Mecânico I", "Unidades": "N Natal",
+    {"Colaborador": "Jeorge Rodrigues", "Classificação": "Mecânico I", "Nível": "Técnico 160h", "Unidades": "N Natal",
      "Email": "jeorge.rodrigues@normaq.com.br", "Telefone": "+55 84 9131-7495"},
-    {"Colaborador": "Carlos Andre", "Classificação": "Mecânico I", "Unidades": "Fortaleza",
+    {"Colaborador": "Carlos Andre", "Classificação": "Mecânico I", "Nível": "Técnico 160h", "Unidades": "Fortaleza",
      "Email": "carlos.andre@normaq.com.br", "Telefone": "+55 85 9281-2340"},
-    {"Colaborador": "Cleison Santos", "Classificação": "Mecânico I", "Unidades": "Fortaleza",
+    {"Colaborador": "Cleison Santos", "Classificação": "Mecânico I", "Nível": "Técnico 160h", "Unidades": "Fortaleza",
      "Email": "cleison.santos@normaq.com.br", "Telefone": "+55 85 9142-4501"},
-    {"Colaborador": "Carlos Estevam", "Classificação": "Auxiliar de Mecânico", "Unidades": "Fortaleza",
+    {"Colaborador": "Carlos Estevam", "Classificação": "Auxiliar de Mecânico", "Nível": "Auxiliar Técnico 40h", "Unidades": "Fortaleza",
      "Email": "carlos.estevam@normaq.com.br", "Telefone": "+55 85 9265-5102"},
-    {"Colaborador": "Emerson Almeida", "Classificação": "Mecânico Champion", "Unidades": "Fortaleza",
+    {"Colaborador": "Emerson Almeida", "Classificação": "Mecânico Champion", "Nível": "Técnico Master", "Unidades": "Fortaleza",
      "Email": "emerson.almeida@normaq.com.br", "Telefone": "+55 85 9119-9171"},
-    {"Colaborador": "Daniel Leite", "Classificação": "JTC", "Unidades": "Fortaleza",
+    {"Colaborador": "Daniel Leite", "Classificação": "JTC", "Nível": "Formação JTC", "Unidades": "Fortaleza",
      "Email": "daniel.leite@normaq.com.br", "Telefone": "+55 85 9117-6864"},
-    {"Colaborador": "Willian Lucas", "Classificação": "Mecânico I", "Unidades": "Petrolina",
+    {"Colaborador": "Willian Lucas", "Classificação": "Mecânico I", "Nível": "Técnico 160h", "Unidades": "Petrolina",
      "Email": "willian.lucas@normaq.com.br", "Telefone": "+55 87 8863-1640"},
-    {"Colaborador": "Adriano Santos", "Classificação": "Mecânico I", "Unidades": "Petrolina",
+    {"Colaborador": "Adriano Santos", "Classificação": "Mecânico I", "Nível": "Técnico 160h", "Unidades": "Petrolina",
      "Email": "adriano.santos@normaq.com.br", "Telefone": "+55 87 9146-3338"},
-    {"Colaborador": "Francisco Neto", "Classificação": "Auxiliar de Mecânico", "Unidades": "Recife",
+    {"Colaborador": "Francisco Neto", "Classificação": "Auxiliar de Mecânico", "Nível": "Auxiliar Técnico 40h", "Unidades": "Recife",
      "Email": "francisco.neto@normaq.com.br", "Telefone": ""},
-    {"Colaborador": "Francisco Leonardo", "Classificação": "Auxiliar de Mecânico", "Unidades": "Fortaleza",
+    {"Colaborador": "Francisco Leonardo", "Classificação": "Auxiliar de Mecânico", "Nível": "Auxiliar Técnico 40h", "Unidades": "Fortaleza",
      "Email": "francisco.batista@normaq.com.br", "Telefone": ""},
-    {"Colaborador": "Francisco Gabriel", "Classificação": "Auxiliar de Mecânico", "Unidades": "Fortaleza",
+    {"Colaborador": "Francisco Gabriel", "Classificação": "Auxiliar de Mecânico", "Nível": "Auxiliar Técnico 40h", "Unidades": "Fortaleza",
      "Email": "francisco.alves@normaq.com.br", "Telefone": ""}
 ]
 
@@ -387,8 +385,12 @@ def main():
                 with col1:
                     st.info(f"**Classificação:** {tecnico_info['Classificação']}")
                 with col2:
-                    st.info(f"**Unidade:** {tecnico_info['Unidades']}")
+                    st.info(f"**Nível:** {tecnico_info['Nível']}")
                 with col3:
+                    st.info(f"**Unidade:** {tecnico_info['Unidades']}")
+                
+                col4, col5 = st.columns(2)
+                with col4:
                     telefone = tecnico_info['Telefone']
                     if telefone:
                         telefone_limpo = re.sub(r'\D', '', telefone)
@@ -396,7 +398,8 @@ def main():
                         st.info(f"**Telefone:** [{telefone}]({whatsapp_link})")
                     else:
                         st.info("**Telefone:** Não informado")
-                st.info(f"**Email:** {tecnico_info['Email']}")
+                with col5:
+                    st.info(f"**Email:** {tecnico_info['Email']}")
 
             if not df_treinamentos.empty:
                 treinamentos_tecnico = df_treinamentos[df_treinamentos["Técnico"] == tecnico_selecionado]
@@ -410,7 +413,7 @@ def main():
                         # Ordem das colunas solicitada
                         colunas_ordenadas = [
                             "Tipo de Treinamento", "Classificação", "Treinamento",
-                            "Classificação do Técnico", "Revenda", "Categoria", "Situação",
+                            "Classificação do Técnico", "Nível", "Revenda", "Categoria", "Situação",
                             "Modalidade", "Entrevista", "Status", "Técnico", "Data Cadastro", "Data Atualização"
                         ]
                         
@@ -497,7 +500,7 @@ def main():
                         for tecnico in tecnicos_com_treinamento:
                             # Encontrar a classificação do técnico
                             classif_tecnico = next((t["Classificação"] for t in BASE_COLABORADORES if t["Colaborador"] == tecnico), "N/A")
-                            nivel_tecnico = CATEGORIA_NIVEIS.get(classif_tecnico, "Nível não definido")
+                            nivel_tecnico = next((t["Nível"] for t in BASE_COLABORADORES if t["Colaborador"] == tecnico), "N/A")
                             st.markdown(f"• **{tecnico}** ({classif_tecnico} - {nivel_tecnico})")
                     else:
                         st.write("Nenhum técnico com treinamento nesta categoria")
@@ -508,7 +511,7 @@ def main():
                         for tecnico in tecnicos_sem_treinamento:
                             # Encontrar a classificação do técnico
                             classif_tecnico = next((t["Classificação"] for t in BASE_COLABORADORES if t["Colaborador"] == tecnico), "N/A")
-                            nivel_tecnico = CATEGORIA_NIVEIS.get(classif_tecnico, "Nível não definido")
+                            nivel_tecnico = next((t["Nível"] for t in BASE_COLABORADORES if t["Colaborador"] == tecnico), "N/A")
                             st.markdown(f"• **{tecnico}** ({classif_tecnico} - {nivel_tecnico})")
                     else:
                         st.write("Todos os técnicos possuem treinamento nesta categoria")
@@ -565,15 +568,16 @@ def main():
             col1, col2 = st.columns(2)
             with col1:
                 treinamento = st.selectbox("Treinamento*", BASE_TREINAMENTO)
-                classificacao = st.selectbox("Classificação*", BASE_FUNCAO)
+                classificacao_tecnico = st.selectbox("Classificação do Técnico*", CLASSIFICACAO_TECNICO)
+                nivel_tecnico = st.selectbox("Nível*", NIVEL_TREINAMENTO)
                 situacao = st.selectbox("Situação*", BASE_SITUACAO)
                 categoria = st.selectbox("Categoria*", list(BASE_CATEGORIA.keys()))
-                revenda = st.selectbox("Revenda*", BASE_REVENDA)
             with col2:
                 tipo_treinamento = st.selectbox("Tipo de Treinamento*", BASE_TIPO_TREINAMENTO)
                 modalidade = st.selectbox("Modalidade*", BASE_MODALIDADE)
                 entrevista = st.selectbox("Entrevista*", BASE_ENTREVISTA)
                 status = st.selectbox("Status*", BASE_STATUS)
+                revenda = st.selectbox("Revenda*", BASE_REVENDA)
                 tecnico = st.selectbox("Técnico*", [t["Colaborador"] for t in BASE_COLABORADORES])
             
             submitted = st.form_submit_button("✅ Cadastrar Treinamento")
@@ -581,14 +585,15 @@ def main():
             if submitted:
                 novo_treinamento = {
                     "Treinamento": treinamento,
-                    "Classificação do Técnico": classificacao,
+                    "Classificação do Técnico": classificacao_tecnico,
+                    "Nível": nivel_tecnico,
                     "Situação": situacao,
                     "Categoria": categoria,
-                    "Revenda": revenda,
                     "Tipo de Treinamento": tipo_treinamento,
                     "Modalidade": modalidade,
                     "Entrevista": entrevista,
                     "Status": status,
+                    "Revenda": revenda,
                     "Técnico": tecnico,
                     "Data Cadastro": get_brasilia_time().strftime("%d/%m/%Y %H:%M")
                 }
@@ -611,15 +616,17 @@ def main():
                 with st.form("form_atualizacao"):
                     col1, col2 = st.columns(2)
                     with col1:
-                        nova_classificacao = st.selectbox("Classificação*", BASE_FUNCAO,
-                                                         index=BASE_FUNCAO.index(treinamento_data["Classificação do Técnico"]) if treinamento_data["Classificação do Técnico"] in BASE_FUNCAO else 0)
+                        nova_classificacao = st.selectbox("Classificação do Técnico*", CLASSIFICACAO_TECNICO,
+                                                         index=CLASSIFICACAO_TECNICO.index(treinamento_data["Classificação do Técnico"]) if treinamento_data["Classificação do Técnico"] in CLASSIFICACAO_TECNICO else 0)
+                        novo_nivel = st.selectbox("Nível*", NIVEL_TREINAMENTO,
+                                                 index=NIVEL_TREINAMENTO.index(treinamento_data["Nível"]) if "Nível" in treinamento_data and treinamento_data["Nível"] in NIVEL_TREINAMENTO else 0)
                         nova_situacao = st.selectbox("Situação", BASE_SITUACAO,
                                                      index=BASE_SITUACAO.index(treinamento_data["Situação"]))
                         novo_status = st.selectbox("Status", BASE_STATUS,
                                                    index=BASE_STATUS.index(treinamento_data["Status"]))
+                    with col2:
                         nova_entrevista = st.selectbox("Entrevista", BASE_ENTREVISTA,
                                                        index=BASE_ENTREVISTA.index(treinamento_data["Entrevista"]))
-                    with col2:
                         nova_modalidade = st.selectbox("Modalidade", BASE_MODALIDADE,
                                                        index=BASE_MODALIDADE.index(treinamento_data["Modalidade"]))
                         nova_revenda = st.selectbox("Revenda", BASE_REVENDA,
@@ -630,6 +637,7 @@ def main():
                     if submitted:
                         dados_atualizados = {
                             "Classificação do Técnico": nova_classificacao,
+                            "Nível": novo_nivel,
                             "Situação": nova_situacao,
                             "Status": novo_status,
                             "Entrevista": nova_entrevista,
