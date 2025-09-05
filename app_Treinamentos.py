@@ -113,7 +113,7 @@ BASE_ENTREVISTA = ["OK", "-"]
 BASE_STATUS = ["Pendente", "Apto p/ Treinamento", "Concluído", "Convocado", "Aprovado via Entrevista"]
 BASE_SITUACAO = ["OK", "PENDENTE"]
 BASE_TREINAMENTO = ["JCB", "NMQ"]
-BASE_REVENDA = ["Recife", "N Natal", "Fortaleza", "Petrolina"]
+BASE_REVENDA = ["Recife", "Natal", "Fortaleza", "Petrolina"]
 
 # Matriz de tipos de treinamento com níveis, status e CLASSIFICAÇÃO
 MATRIZ_TREINAMENTOS = {
