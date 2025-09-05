@@ -104,8 +104,8 @@ BASE_TIPO_TREINAMENTO = [
     "Integração I - 8h", "Integração II - 8h", "Integração III - 8h",
     "Integração IV - 8h", "Conceitos - 8h", "Metrologia - 8h",
     "Básico I - 8h", "Básico II - 8h", "Integração V - 4h",
-    "Básico III - 8h", "Integração VII - 4h", "Integração VIII - 4h",
-    "Integração VI - 4h"
+    "Básico III - 8h", "Integração VII - 4h", "Integrazione VIII - 4h",
+    "Integrazione VI - 4h"
 ]
 
 BASE_MODALIDADE = ["A Definir", "Presencial", "Online"]
@@ -438,69 +438,70 @@ def main():
             if not df_treinamentos.empty:
                 treinamentos_tecnico = df_treinamentos[df_treinamentos["Técnico"] == tecnico_selecionado]
                 if not treinamentos_tecnico.empty:
-                    # Opção para mostrar/ocultar colunas
                     st.subheader("📋 Treinamentos")
                     
-                    # Lista de todas as colunas disponíveis
-                    todas_colunas = [
+                    # Ordem das colunas solicitada
+                    colunas_ordenadas = [
                         "Tipo de Treinamento", "Classificação", "Treinamento",
                         "Classificação do Técnico", "Nível", "Revenda", "Categoria", "Situação",
                         "Modalidade", "Entrevista", "Status", "Técnico", "Data Cadastro", "Data Atualização"
                     ]
                     
                     # Filtrar apenas as colunas que existem no DataFrame
-                    colunas_existentes = [col for col in todas_colunas if col in treinamentos_tecnico.columns]
+                    colunas_existentes = [col for col in colunas_ordenadas if col in treinamentos_tecnico.columns]
                     
-                    # Checkbox para selecionar colunas a serem exibidas
-                    colunas_selecionadas = st.multiselect(
-                        "Mostrar/ocultar colunas:",
-                        options=colunas_existentes,
-                        default=colunas_existentes,
-                        key="colunas_treinamentos"
+                    # Usar o recurso nativo do Streamlit para mostrar/ocultar colunas
+                    st.dataframe(
+                        treinamentos_tecnico[colunas_existentes],
+                        use_container_width=True,
+                        hide_index=True
                     )
                     
-                    if colunas_selecionadas:
-                        st.dataframe(treinamentos_tecnico[colunas_selecionadas])
+                    # Separar treinamentos concluídos e pendentes
+                    treinamentos_ok = treinamentos_tecnico[treinamentos_tecnico["Situação"] == "OK"]
+                    treinamentos_pendentes = treinamentos_tecnico[treinamentos_tecnico["Situação"] == "PENDENTE"]
+                    
+                    if not treinamentos_ok.empty:
+                        st.subheader("✅ Treinamentos Concluídos (OK)")
+                        st.dataframe(
+                            treinamentos_ok[colunas_existentes],
+                            use_container_width=True,
+                            hide_index=True
+                        )
                         
-                        # Separar treinamentos concluídos e pendentes
-                        treinamentos_ok = treinamentos_tecnico[treinamentos_tecnico["Situação"] == "OK"]
-                        treinamentos_pendentes = treinamentos_tecnico[treinamentos_tecnico["Situação"] == "PENDENTE"]
+                        # Botão para exportar
+                        csv = treinamentos_ok[colunas_existentes].to_csv(index=False)
+                        st.download_button(
+                            label="📥 Exportar Treinamentos Concluídos",
+                            data=csv,
+                            file_name=f"treinamentos_concluidos_{tecnico_selecionado}.csv",
+                            mime="text/csv"
+                        )
+                    
+                    if not treinamentos_pendentes.empty:
+                        st.subheader("⏳ Treinamentos Pendentes")
+                        st.dataframe(
+                            treinamentos_pendentes[colunas_existentes],
+                            use_container_width=True,
+                            hide_index=True
+                        )
                         
-                        if not treinamentos_ok.empty:
-                            st.subheader("✅ Treinamentos Concluídos (OK)")
-                            st.dataframe(treinamentos_ok[colunas_selecionadas])
-                            
-                            # Botão para exportar
-                            csv = treinamentos_ok[colunas_selecionadas].to_csv(index=False)
-                            st.download_button(
-                                label="📥 Exportar Treinamentos Concluídos",
-                                data=csv,
-                                file_name=f"treinamentos_concluidos_{tecnico_selecionado}.csv",
-                                mime="text/csv"
-                            )
-                        
-                        if not treinamentos_pendentes.empty:
-                            st.subheader("⏳ Treinamentos Pendentes")
-                            st.dataframe(treinamentos_pendentes[colunas_selecionadas])
-                            
-                            # Botão para exportar
-                            csv = treinamentos_pendentes[colunas_selecionadas].to_csv(index=False)
-                            st.download_button(
-                                label="📥 Exportar Treinamentos Pendentes",
-                                data=csv,
-                                file_name=f"treinamentos_pendentes_{tecnico_selecionado}.csv",
-                                mime="text/csv"
-                            )
+                        # Botão para exportar
+                        csv = treinamentos_pendentes[colunas_existentes].to_csv(index=False)
+                        st.download_button(
+                            label="📥 Exportar Treinamentos Pendentes",
+                            data=csv,
+                            file_name=f"treinamentos_pendentes_{tecnico_selecionado}.csv",
+                            mime="text/csv"
+                        )
 
-                        col_stat1, col_stat2, col_stat3 = st.columns(3)
-                        with col_stat1:
-                            st.metric("Total", len(treinamentos_tecnico))
-                        with col_stat2:
-                            st.metric("Concluídos", len(treinamentos_ok))
-                        with col_stat3:
-                            st.metric("Pendentes", len(treinamentos_pendentes))
-                    else:
-                        st.info("Selecione pelo menos uma coluna para visualizar.")
+                    col_stat1, col_stat2, col_stat3 = st.columns(3)
+                    with col_stat1:
+                        st.metric("Total", len(treinamentos_tecnico))
+                    with col_stat2:
+                        st.metric("Concluídos", len(treinamentos_ok))
+                    with col_stat3:
+                        st.metric("Pendentes", len(treinamentos_pendentes))
                 else:
                     st.warning("Nenhum treinamento encontrado para este técnico.")
             else:
