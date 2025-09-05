@@ -6,6 +6,7 @@ from datetime import datetime
 import os
 import re
 import json
+import time
 
 # Configuração da página
 st.set_page_config(
@@ -279,7 +280,18 @@ def main():
     # Cadastro
     with tab2:
         st.header("➕ Cadastro de Novo Treinamento")
-        with st.form("form_cadastro"):
+        
+        # Usar session_state para controlar o estado do formulário
+        if 'form_submitted' not in st.session_state:
+            st.session_state.form_submitted = False
+            
+        if st.session_state.form_submitted:
+            st.success("🎉 Treinamento cadastrado com sucesso!")
+            time.sleep(2)  # Pequeno delay para visualização
+            st.session_state.form_submitted = False
+            st.rerun()
+        
+        with st.form("form_cadastro", clear_on_submit=True):
             col1, col2 = st.columns(2)
             with col1:
                 treinamento = st.selectbox("Treinamento*", BASE_TREINAMENTO)
@@ -293,6 +305,7 @@ def main():
                 entrevista = st.selectbox("Entrevista*", BASE_ENTREVISTA)
                 status = st.selectbox("Status*", BASE_STATUS)
                 tecnico = st.selectbox("Técnico*", [t["Colaborador"] for t in BASE_COLABORADORES])
+            
             submitted = st.form_submit_button("✅ Cadastrar Treinamento")
 
             if submitted:
@@ -309,10 +322,9 @@ def main():
                     "Técnico": tecnico,
                     "Data Cadastro": datetime.now().strftime("%d/%m/%Y %H:%M")
                 }
+                
                 if save_to_sheet(client, SPREADSHEET_NAME, SHEET_NAME, novo_treinamento):
-                    st.success("🎉 Treinamento cadastrado com sucesso!")
-                    st.balloons()
-                    st.rerun()
+                    st.session_state.form_submitted = True
                 else:
                     st.error("❌ Erro ao cadastrar treinamento.")
 
