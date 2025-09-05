@@ -48,7 +48,18 @@ def get_google_creds():
         return None
 
 # Dados fixos
-BASE_FUNCAO = ["Mecânico I", "Mecânico II", "JTC", "Auxiliar de Mecânico", "Mecânico Champion"]
+BASE_FUNCAO = [
+    "Auxiliar Técnico 40h",
+    "Formação JTC", 
+    "JTC",
+    "Técnico 160h",
+    "Técnico Diagnóstico 120h",
+    "Técnico Master",
+    "Mecânico I", 
+    "Mecânico II", 
+    "Auxiliar de Mecânico", 
+    "Mecânico Champion"
+]
 
 BASE_CATEGORIA = {
     "THL": "MANIPULADOR TELESCOPICO",
@@ -64,19 +75,18 @@ BASE_CATEGORIA = {
     "OUTROS": "Sem Dados"
 }
 
-# Níveis das categorias
+# Níveis das categorias - AGORA BASEADO NA CLASSIFICAÇÃO DO TÉCNICO
 CATEGORIA_NIVEIS = {
-    "THL": "Técnico 160h",
-    "SSL": "Técnico 160h", 
-    "EXC": "Técnico 160h",
-    "BHL": "Técnico 160h",
-    "MINI": "Técnico 160h",
-    "WLS": "Técnico 160h",
-    "CPTN": "Técnico 160h",
-    "THL e BHL": "Técnico 160h",
-    "WLS e EXC": "Técnico 160h",
-    "TODAS": "Técnico Master",
-    "OUTROS": "Sem Nível Definido"
+    "Auxiliar Técnico 40h": "Auxiliar Técnico 40h",
+    "Formação JTC": "Formação JTC",
+    "JTC": "JTC",
+    "Técnico 160h": "Técnico 160h",
+    "Técnico Diagnóstico 120h": "Técnico Diagnóstico 120h",
+    "Técnico Master": "Técnico Master",
+    "Mecânico I": "Técnico 160h",
+    "Mecânico II": "Técnico 160h",
+    "Auxiliar de Mecânico": "Auxiliar Técnico 40h",
+    "Mecânico Champion": "Técnico Master"
 }
 
 BASE_TIPO_TREINAMENTO = [
@@ -99,7 +109,7 @@ BASE_MODALIDADE = ["A Definir", "Presencial", "Online"]
 BASE_ENTREVISTA = ["OK", "-"]
 BASE_STATUS = ["Pendente", "Apto p/ Treinamento", "Concluído", "Convocado", "Aprovado via Entrevista"]
 BASE_SITUACAO = ["OK", "PENDENTE"]
-BASE_TREINamento = ["JCB", "NMQ"]
+BASE_TREINAMENTO = ["JCB", "NMQ"]
 BASE_REVENDA = ["Recife", "Natal", "Fortaleza", "Petrolina"]
 
 # Matriz de tipos de treinamento com níveis e status
@@ -402,12 +412,28 @@ def main():
         categoria_selecionada = st.selectbox("Selecione a categoria:", categorias)
         
         if categoria_selecionada:
-            # Mostrar nível da categoria
-            nivel_categoria = CATEGORIA_NIVEIS.get(categoria_selecionada, "Nível não definido")
-            st.info(f"**Nível da Categoria {categoria_selecionada}:** {nivel_categoria}")
+            # Mostrar nome da categoria
+            nome_categoria = BASE_CATEGORIA.get(categoria_selecionada, "Nome não definido")
+            st.info(f"**Categoria {categoria_selecionada}:** {nome_categoria}")
             
             if not df_treinamentos.empty:
                 treinamentos_categoria = df_treinamentos[df_treinamentos["Categoria"] == categoria_selecionada]
+                
+                if not treinamentos_categoria.empty:
+                    # Agrupar por classificação para mostrar os níveis
+                    classificacoes = treinamentos_categoria["Classificação do Técnico"].unique()
+                    
+                    st.subheader("📊 Níveis dos Técnicos com Treinamento")
+                    for classificacao in classificacoes:
+                        nivel = CATEGORIA_NIVEIS.get(classificacao, "Nível não definido")
+                        tecnicos_desta_classificacao = treinamentos_categoria[
+                            treinamentos_categoria["Classificação do Técnico"] == classificacao
+                        ]["Técnico"].unique()
+                        
+                        st.write(f"**{classificacao}** → **{nivel}**:")
+                        for tecnico in tecnicos_desta_classificacao:
+                            st.markdown(f"• {tecnico}")
+                
                 tecnicos_com_treinamento = treinamentos_categoria["Técnico"].unique().tolist()
                 todos_tecnicos = [t["Colaborador"] for t in BASE_COLABORADORES]
                 tecnicos_sem_treinamento = [t for t in todos_tecnicos if t not in tecnicos_com_treinamento]
@@ -417,7 +443,10 @@ def main():
                     st.subheader("✅ Técnicos com Treinamento")
                     if tecnicos_com_treinamento:
                         for tecnico in tecnicos_com_treinamento:
-                            st.markdown(f"• **{tecnico}**")
+                            # Encontrar a classificação do técnico
+                            classif_tecnico = next((t["Classificação"] for t in BASE_COLABORADORES if t["Colaborador"] == tecnico), "N/A")
+                            nivel_tecnico = CATEGORIA_NIVEIS.get(classif_tecnico, "Nível não definido")
+                            st.markdown(f"• **{tecnico}** ({classif_tecnico} - {nivel_tecnico})")
                     else:
                         st.write("Nenhum técnico com treinamento nesta categoria")
                 
@@ -425,7 +454,10 @@ def main():
                     st.subheader("❌ Técnicos sem Treinamento")
                     if tecnicos_sem_treinamento:
                         for tecnico in tecnicos_sem_treinamento:
-                            st.markdown(f"• **{tecnico}**")
+                            # Encontrar a classificação do técnico
+                            classif_tecnico = next((t["Classificação"] for t in BASE_COLABORADORES if t["Colaborador"] == tecnico), "N/A")
+                            nivel_tecnico = CATEGORIA_NIVEIS.get(classif_tecnico, "Nível não definido")
+                            st.markdown(f"• **{tecnico}** ({classif_tecnico} - {nivel_tecnico})")
                     else:
                         st.write("Todos os técnicos possuem treinamento nesta categoria")
 
@@ -478,7 +510,7 @@ def main():
         with st.form("form_cadastro", clear_on_submit=True):
             col1, col2 = st.columns(2)
             with col1:
-                treinamento = st.selectbox("Treinamento*", BASE_TREINamento)
+                treinamento = st.selectbox("Treinamento*", BASE_TREINAMENTO)
                 classificacao = st.selectbox("Classificação*", BASE_FUNCAO)
                 situacao = st.selectbox("Situação*", BASE_SITUACAO)
                 categoria = st.selectbox("Categoria*", list(BASE_CATEGORIA.keys()))
