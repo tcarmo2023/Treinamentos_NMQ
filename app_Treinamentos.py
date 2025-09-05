@@ -16,19 +16,7 @@ st.set_page_config(
     layout="wide",
 )
 
-# Verifica se está sendo executado pelo Streamlit
-def is_running_with_streamlit():
-    return 'streamlist' in sys.modules
-
-# Função para corrigir padding base64
-def fix_base64_padding(base64_string):
-    """Corrige o padding de strings base64"""
-    padding = len(base64_string) % 4
-    if padding:
-        base64_string += '=' * (4 - padding)
-    return base64_string
-
-# Função para obter credenciais CORRIGIDA
+# Função para obter credenciais SIMPLIFICADA
 def get_google_creds():
     scopes = [
         "https://www.googleapis.com/auth/spreadsheets",
@@ -41,43 +29,25 @@ def get_google_creds():
             try:
                 return Credentials.from_service_account_file('credenciais.json', scopes=scopes)
             except Exception as e:
-                st.sidebar.error(f"Erro no arquivo credenciais.json: {e}")
+                st.sidebar.error(f"Erro no arquivo credenciais.json")
                 return None
         
         # Se não encontrar arquivo, tenta Streamlit Secrets
         elif 'gcp_service_account' in st.secrets:
-            creds_info = dict(st.secrets['gcp_service_account'])
-            
-            # Verifica e corrige a private_key se estiver em base64
-            if 'private_key' in creds_info:
-                private_key = creds_info['private_key']
-                
-                # Se não parece uma chave PEM, tenta decodificar base64
-                if 'BEGIN PRIVATE KEY' not in private_key:
-                    try:
-                        # Corrige o padding primeiro
-                        private_key = fix_base64_padding(private_key)
-                        # Decodifica base64
-                        decoded_key = base64.b64decode(private_key).decode('utf-8')
-                        creds_info['private_key'] = decoded_key
-                    except Exception:
-                        # Se falhar, tenta usar como está
-                        pass
-            
             try:
+                creds_info = dict(st.secrets['gcp_service_account'])
                 return Credentials.from_service_account_info(creds_info, scopes=scopes)
             except Exception as e:
-                st.sidebar.error(f"Erro nas credenciais: {e}")
+                st.sidebar.error("Erro nas credenciais do Streamlit")
                 return None
         
-        else:
-            return None
+        return None
             
     except Exception as e:
-        st.sidebar.error(f"Erro ao carregar credenciais: {str(e)}")
+        st.sidebar.error("Erro ao carregar credenciais")
         return None
 
-# Dados fixos (bases) - Corrigidos os caracteres
+# Dados fixos (bases)
 BASE_FUNCAO = ["Mecânico I", "Mecânico II", "JTC", "Auxiliar de Mecânico", "Mecânico Champion"]
 
 BASE_CATEGORIA = {
@@ -117,7 +87,6 @@ BASE_SITUACAO = ["OK", "PENDENTE"]
 BASE_TREINAMENTO = ["JCB", "NMQ"]
 BASE_REVENDA = ["Recife", "Natal", "Fortaleza", "Petrolina"]
 
-# Colaboradores com caracteres corrigidos
 BASE_COLABORADORES = [
     {"Colaborador": "Ivanildo Benvindo", "Classificação": "Mecânico I", "Unidades": "Recife", 
      "Email": "ivanildo.benvindo@normaq.com.br", "Telefone": "+55 81 9119-9240"},
@@ -173,7 +142,7 @@ def load_sheet_data(client, spreadsheet_name, sheet_name):
         df.columns = [str(c).strip() for c in df.columns]
         return df
     except Exception as e:
-        st.error(f"Erro ao carregar dados: {e}")
+        st.error(f"Erro ao carregar dados da planilha")
         return pd.DataFrame()
 
 def save_to_sheet(client, spreadsheet_name, sheet_name, data):
@@ -195,7 +164,7 @@ def save_to_sheet(client, spreadsheet_name, sheet_name, data):
         worksheet.append_row(row_data)
         return True
     except Exception as e:
-        st.error(f"Erro ao salvar dados: {e}")
+        st.error(f"Erro ao salvar dados")
         return False
 
 def update_sheet_data(client, spreadsheet_name, sheet_name, row_index, data):
@@ -212,7 +181,7 @@ def update_sheet_data(client, spreadsheet_name, sheet_name, row_index, data):
         
         return True
     except Exception as e:
-        st.error(f"Erro ao atualizar dados: {e}")
+        st.error(f"Erro ao atualizar dados")
         return False
 
 def delete_from_sheet(client, spreadsheet_name, sheet_name, row_index):
@@ -222,86 +191,71 @@ def delete_from_sheet(client, spreadsheet_name, sheet_name, row_index):
         worksheet.delete_rows(row_index)
         return True
     except Exception as e:
-        st.error(f"Erro ao excluir dados: {e}")
+        st.error(f"Erro ao excluir dados")
         return False
 
 # Função principal
 def main():
     st.title("📚 Sistema de Gestão de Treinamentos de Técnicos - NORMAQ")
     
-    # Sidebar com informações
+    # Sidebar simples apenas para modo desenvolvimento
     with st.sidebar:
-        st.header("🔧 Configuração")
-        
-        # Modo offline para testes
         modo_desenvolvimento = st.checkbox("Modo de desenvolvimento (dados de exemplo)", value=True)
-        
-        if modo_desenvolvimento:
-            st.success("✅ Modo de desenvolvimento ativado")
-            st.info("Usando dados de exemplo para demonstração")
-            
-            # Dados de exemplo corrigidos
-            df_exemplo = pd.DataFrame({
-                "Técnico": ["Ivanildo Benvindo", "Luiz Guilherme", "Jesse Pereira"],
-                "Treinamento": ["JCB", "NMQ", "JCB"],
-                "Categoria": ["THL", "SSL", "EXC"],
-                "Situação": ["OK", "PENDENTE", "OK"],
-                "Status": ["Concluído", "Pendente", "Concluído"],
-                "Tipo de Treinamento": ["Integração - 8h", "Tecnologias - 8h", "Condução Máquinas - 8h"]
-            })
-            
-            st.dataframe(df_exemplo)
-            
-            # Mostrar instruções para configurar credenciais
-            st.markdown("---")
-            st.subheader("📋 Para usar Google Sheets:")
-            st.info("""
-            1. **Desmarque** o modo de desenvolvimento
-            2. **Coloque** o arquivo `credenciais.json` na pasta
-            3. **Ou configure** as secrets no Streamlit Cloud
-            """)
-            
-            # Mostrar todas as abas em modo de desenvolvimento
-            st.markdown("---")
-            st.subheader("📊 Abas do Sistema")
-            st.write("• **Consulta** - Visualizar treinamentos")
-            st.write("• **Cadastro** - Adicionar novos treinamentos")
-            st.write("• **Atualização** - Editar treinamentos existentes")
-            st.write("• **Exclusão** - Remover treinamentos (admin)")
-            
-            return
     
-    # Inicializar cliente Google (apenas se não estiver em modo desenvolvimento)
+    # Dados de exemplo para modo desenvolvimento
+    dados_exemplo = pd.DataFrame({
+        "Técnico": ["Ivanildo Benvindo", "Luiz Guilherme", "Jesse Pereira"],
+        "Treinamento": ["JCB", "NMQ", "JCB"],
+        "Categoria": ["THL", "SSL", "EXC"],
+        "Situação": ["OK", "PENDENTE", "OK"],
+        "Status": ["Concluído", "Pendente", "Concluído"],
+        "Tipo de Treinamento": ["Integração - 8h", "Tecnologias - 8h", "Condução Máquinas - 8h"],
+        "Classificação do Técnico": ["Mecânico I", "Mecânico II", "Mecânico II"]
+    })
+    
+    # Se estiver em modo desenvolvimento, mostrar dados de exemplo
+    if modo_desenvolvimento:
+        st.info("📊 **Modo de desenvolvimento ativado** - Dados de exemplo")
+        mostrar_interface_completa(dados_exemplo, None, None, None)
+        return
+    
+    # Se não estiver em modo desenvolvimento, tentar conectar ao Google Sheets
     try:
         creds = get_google_creds()
         if creds is None:
             st.warning("""
-            ⚠️ **Modo de demonstração ativado**
+            🔧 **Configure as credenciais do Google Sheets**
             
-            Para conectar com Google Sheets:
-            1. Desmarque "Modo de desenvolvimento" na sidebar
-            2. Configure as credenciais do Google
+            Para usar o sistema completo, você precisa:
+            
+            1. **Arquivo local:** Coloque `credenciais.json` na pasta do projeto
+            2. **Streamlit Cloud:** Configure as secrets no painel administrativo
+            
+            **Enquanto isso, usando dados de exemplo:**
             """)
-            
-            # Mostrar interface completa mesmo sem conexão
-            mostrar_interface_completa()
+            mostrar_interface_completa(dados_exemplo, None, None, None)
             return
             
         client = gspread.authorize(creds)
         SPREADSHEET_NAME = "Treinamentos"
         SHEET_NAME = "Página1"
         
-        st.sidebar.success("✅ Conectado ao Google Sheets")
+        # Carregar dados reais
+        df_treinamentos = load_sheet_data(client, SPREADSHEET_NAME, SHEET_NAME)
         
-        # Mostrar interface completa com dados reais
-        mostrar_interface_completa(client, SPREADSHEET_NAME, SHEET_NAME)
+        if df_treinamentos.empty:
+            st.warning("📝 Nenhum dado encontrado na planilha. Usando dados de exemplo.")
+            mostrar_interface_completa(dados_exemplo, client, SPREADSHEET_NAME, SHEET_NAME)
+        else:
+            st.success("✅ Conectado ao Google Sheets")
+            mostrar_interface_completa(df_treinamentos, client, SPREADSHEET_NAME, SHEET_NAME)
         
     except Exception as e:
-        st.error(f"❌ Erro de conexão: {e}")
-        st.info("💡 Ative o modo de desenvolvimento na sidebar")
-        mostrar_interface_completa()
+        st.error(f"❌ Erro de conexão com Google Sheets")
+        st.info("📋 Usando dados de exemplo para demonstração")
+        mostrar_interface_completa(dados_exemplo, None, None, None)
 
-def mostrar_interface_completa(client=None, spreadsheet_name=None, sheet_name=None):
+def mostrar_interface_completa(df_treinamentos, client, spreadsheet_name, sheet_name):
     """Mostra a interface completa do sistema"""
     
     # Abas do sistema
@@ -309,24 +263,20 @@ def mostrar_interface_completa(client=None, spreadsheet_name=None, sheet_name=No
     
     with tab1:
         st.header("📊 Consulta de Treinamentos")
-        st.info("Selecione como deseja consultar os treinamentos")
         
         consulta_por = st.radio("Consultar por:", ["Técnicos", "Categoria"], horizontal=True)
         
         if consulta_por == "Técnicos":
-            # Lista de técnicos para seleção
             tecnicos = [t["Colaborador"] for t in BASE_COLABORADORES]
             tecnico_selecionado = st.selectbox("Selecione o técnico:", tecnicos)
             
             if tecnico_selecionado:
-                # Encontrar dados do técnico
                 tecnico_info = next((t for t in BASE_COLABORADORES if t["Colaborador"] == tecnico_selecionado), None)
                 
                 if tecnico_info:
                     st.subheader(f"Informações do Técnico: {tecnico_info['Colaborador']}")
                     
                     col1, col2, col3 = st.columns(3)
-                    
                     with col1:
                         st.info(f"**Classificação:** {tecnico_info['Classificação']}")
                     with col2:
@@ -334,93 +284,50 @@ def mostrar_interface_completa(client=None, spreadsheet_name=None, sheet_name=No
                     with col3:
                         telefone = tecnico_info['Telefone']
                         if telefone:
-                            telefone_limpo = re.sub(r'\D', '', telefone)
-                            whatsapp_link = f"https://wa.me/{telefone_limpo}" if telefone_limpo else "#"
-                            st.info(f"**Telefone:** [{telefone}]({whatsapp_link})")
+                            st.info(f"**Telefone:** {telefone}")
                         else:
                             st.info("**Telefone:** Não informado")
                     
                     st.info(f"**Email:** {tecnico_info['Email']}")
                     
-                    if client:
-                        # Carregar treinamentos reais
-                        df_treinamentos = load_sheet_data(client, spreadsheet_name, sheet_name)
-                    else:
-                        # Dados de exemplo
-                        df_treinamentos = pd.DataFrame({
-                            "Técnico": ["Ivanildo Benvindo", "Luiz Guilherme", "Jesse Pereira"],
-                            "Treinamento": ["JCB", "NMQ", "JCB"],
-                            "Categoria": ["THL", "SSL", "EXC"],
-                            "Situação": ["OK", "PENDENTE", "OK"],
-                            "Status": ["Concluído", "Pendente", "Concluído"],
-                            "Tipo de Treinamento": ["Integração - 8h", "Tecnologias - 8h", "Condução Máquinas - 8h"]
-                        })
+                    # Filtrar treinamentos do técnico
+                    treinamentos_tecnico = df_treinamentos[df_treinamentos["Técnico"] == tecnico_selecionado]
                     
-                    if not df_treinamentos.empty:
-                        # Filtrar treinamentos do técnico
-                        treinamentos_tecnico = df_treinamentos[df_treinamentos["Técnico"] == tecnico_selecionado]
+                    if not treinamentos_tecnico.empty:
+                        treinamentos_ok = treinamentos_tecnico[treinamentos_tecnico["Situação"] == "OK"]
+                        treinamentos_pendentes = treinamentos_tecnico[treinamentos_tecnico["Situação"] == "PENDENTE"]
                         
-                        if not treinamentos_tecnico.empty:
-                            # Separar por situação
-                            treinamentos_ok = treinamentos_tecnico[treinamentos_tecnico["Situação"] == "OK"]
-                            treinamentos_pendentes = treinamentos_tecnico[treinamentos_tecnico["Situação"] == "PENDENTE"]
-                            
-                            # Exibir treinamentos OK
-                            if not treinamentos_ok.empty:
-                                st.subheader("✅ Treinamentos Concluídos (OK)")
-                                st.dataframe(treinamentos_ok)
-                            
-                            # Exibir treinamentos pendentes
-                            if not treinamentos_pendentes.empty:
-                                st.subheader("⏳ Treinamentos Pendentes")
-                                st.dataframe(treinamentos_pendentes)
-                            
-                            # Estatísticas
-                            col_stat1, col_stat2, col_stat3 = st.columns(3)
-                            with col_stat1:
-                                st.metric("Total", len(treinamentos_tecnico))
-                            with col_stat2:
-                                st.metric("Concluídos", len(treinamentos_ok))
-                            with col_stat3:
-                                st.metric("Pendentes", len(treinamentos_pendentes))
-                                
-                        else:
-                            st.warning("Nenhum treinamento encontrado para este técnico.")
+                        if not treinamentos_ok.empty:
+                            st.subheader("✅ Treinamentos Concluídos (OK)")
+                            st.dataframe(treinamentos_ok)
+                        
+                        if not treinamentos_pendentes.empty:
+                            st.subheader("⏳ Treinamentos Pendentes")
+                            st.dataframe(treinamentos_pendentes)
+                        
+                        col_stat1, col_stat2, col_stat3 = st.columns(3)
+                        with col_stat1:
+                            st.metric("Total", len(treinamentos_tecnico))
+                        with col_stat2:
+                            st.metric("Concluídos", len(treinamentos_ok))
+                        with col_stat3:
+                            st.metric("Pendentes", len(treinamentos_pendentes))
                     else:
-                        st.warning("Nenhum treinamento cadastrado no sistema.")
+                        st.warning("Nenhum treinamento encontrado para este técnico.")
         
-        else:  # Consulta por Categoria
+        else:
             categorias = list(BASE_CATEGORIA.keys())
             categoria_selecionada = st.selectbox("Selecione a categoria:", categorias)
             
             if categoria_selecionada:
-                if client:
-                    # Carregar treinamentos reais
-                    df_treinamentos = load_sheet_data(client, spreadsheet_name, sheet_name)
-                else:
-                    # Dados de exemplo
-                    df_treinamentos = pd.DataFrame({
-                        "Técnico": ["Ivanildo Benvindo", "Luiz Guilherme", "Jesse Pereira"],
-                        "Categoria": ["THL", "SSL", "EXC"],
-                        "Situação": ["OK", "PENDENTE", "OK"]
-                    })
+                treinamentos_categoria = df_treinamentos[df_treinamentos["Categoria"] == categoria_selecionada]
                 
-                if not df_treinamentos.empty:
-                    # Filtrar treinamentos da categoria
-                    treinamentos_categoria = df_treinamentos[df_treinamentos["Categoria"] == categoria_selecionada]
-                    
-                    # Técnicos com treinamento na categoria
+                if not treinamentos_categoria.empty:
                     tecnicos_com_treinamento = treinamentos_categoria["Técnico"].unique().tolist()
-                    
-                    # Todos os técnicos
                     todos_tecnicos = [t["Colaborador"] for t in BASE_COLABORADORES]
-                    
-                    # Técnicos sem treinamento na categoria
                     tecnicos_sem_treinamento = [t for t in todos_tecnicos if t not in tecnicos_com_treinamento]
                     
-                    # Exibir resultados
                     col1, col2 = st.columns(2)
-                    
                     with col1:
                         st.subheader("✅ Técnicos com Treinamento")
                         if tecnicos_com_treinamento:
@@ -437,22 +344,19 @@ def mostrar_interface_completa(client=None, spreadsheet_name=None, sheet_name=No
                         else:
                             st.write("Todos os técnicos possuem treinamento")
                     
-                    # Estatísticas
                     st.metric("Técnicos com Treinamento", len(tecnicos_com_treinamento))
-                    
                 else:
-                    st.warning("Nenhum treinamento cadastrado no sistema.")
+                    st.warning("Nenhum treinamento encontrado para esta categoria")
     
     with tab2:
         st.header("➕ Cadastro de Novo Treinamento")
-        st.info("Preencha os dados abaixo para cadastrar um novo treinamento")
         
-        with st.form("form_cadastro_treinamento"):
+        with st.form("form_cadastro"):
             col1, col2 = st.columns(2)
             
             with col1:
                 treinamento = st.selectbox("Treinamento*", BASE_TREINAMENTO)
-                classificacao_tecnico = st.selectbox("Classificação*", BASE_FUNCAO)
+                classificacao = st.selectbox("Classificação*", BASE_FUNCAO)
                 situacao = st.selectbox("Situação*", BASE_SITUACAO)
                 categoria = st.selectbox("Categoria*", list(BASE_CATEGORIA.keys()))
                 revenda = st.selectbox("Revenda*", BASE_REVENDA)
@@ -467,15 +371,13 @@ def mostrar_interface_completa(client=None, spreadsheet_name=None, sheet_name=No
             submitted = st.form_submit_button("✅ Cadastrar Treinamento")
             
             if submitted:
-                if not client:
-                    st.success("🎉 Modo demonstração: Treinamento simulado com sucesso!")
-                    st.balloons()
+                if client is None:
+                    st.success("🎉 Modo demonstração: Dados simulados com sucesso!")
                 else:
                     try:
-                        # Preparar dados
                         novo_treinamento = {
                             "Treinamento": treinamento,
-                            "Classificação do Técnico": classificacao_tecnico,
+                            "Classificação do Técnico": classificacao,
                             "Situação": situacao,
                             "Categoria": categoria,
                             "Revenda": revenda,
@@ -487,128 +389,88 @@ def mostrar_interface_completa(client=None, spreadsheet_name=None, sheet_name=No
                             "Data Cadastro": datetime.now().strftime("%d/%m/%Y %H:%M")
                         }
                         
-                        # Salvar na planilha
                         if save_to_sheet(client, spreadsheet_name, sheet_name, novo_treinamento):
                             st.success("🎉 Treinamento cadastrado com sucesso!")
-                            st.balloons()
                         else:
-                            st.error("❌ Erro ao cadastrar treinamento.")
-                            
+                            st.error("❌ Erro ao cadastrar")
                     except Exception as e:
-                        st.error(f"❌ Erro: {e}")
+                        st.error("❌ Erro ao salvar dados")
     
     with tab3:
         st.header("✏️ Atualização de Treinamentos")
-        st.info("Selecione um treinamento para atualizar")
         
-        if not client:
-            st.warning("📝 Modo demonstração - Funcionalidade de atualização disponível apenas com Google Sheets")
+        if client is None:
+            st.info("📝 Funcionalidade disponível apenas com Google Sheets")
             return
         
-        # Carregar treinamentos
-        df_treinamentos = load_sheet_data(client, spreadsheet_name, sheet_name)
-        
         if not df_treinamentos.empty:
-            # Selecionar treinamento para atualizar
             treinamentos_lista = df_treinamentos.apply(
-                lambda x: f"{x['Técnico']} - {x['Tipo de Treinamento']} - {x['Situação']}", axis=1
+                lambda x: f"{x['Técnico']} - {x['Tipo de Treinamento']}", axis=1
             ).tolist()
             
             treinamento_selecionado = st.selectbox("Selecione o treinamento:", treinamentos_lista)
             
             if treinamento_selecionado:
-                # Encontrar índice do treinamento
                 idx = treinamentos_lista.index(treinamento_selecionado)
                 treinamento_data = df_treinamentos.iloc[idx]
                 
-                with st.form("form_atualizacao_treinamento"):
+                with st.form("form_atualizacao"):
                     st.subheader(f"Editando: {treinamento_selecionado}")
                     
                     col1, col2 = st.columns(2)
-                    
                     with col1:
                         nova_situacao = st.selectbox("Situação", BASE_SITUACAO, 
                                                    index=BASE_SITUACAO.index(treinamento_data["Situação"]) if treinamento_data["Situação"] in BASE_SITUACAO else 0)
                         novo_status = st.selectbox("Status", BASE_STATUS,
                                                  index=BASE_STATUS.index(treinamento_data["Status"]) if treinamento_data["Status"] in BASE_STATUS else 0)
-                        nova_entrevista = st.selectbox("Entrevista", BASE_ENTREVISTA,
-                                                     index=BASE_ENTREVISTA.index(treinamento_data["Entrevista"]) if treinamento_data["Entrevista"] in BASE_ENTREVISTA else 0)
                     
                     with col2:
                         nova_modalidade = st.selectbox("Modalidade", BASE_MODALIDADE,
                                                      index=BASE_MODALIDADE.index(treinamento_data["Modalidade"]) if treinamento_data["Modalidade"] in BASE_MODALIDADE else 0)
-                        nova_revenda = st.selectbox("Revenda", BASE_REVENDA,
-                                                  index=BASE_REVENDA.index(treinamento_data["Revenda"]) if treinamento_data["Revenda"] in BASE_REVENDA else 0)
                     
                     submitted = st.form_submit_button("💾 Atualizar")
                     
                     if submitted:
-                        try:
-                            # Preparar dados para atualização
-                            dados_atualizados = {
-                                "Situação": nova_situacao,
-                                "Status": novo_status,
-                                "Entrevista": nova_entrevista,
-                                "Modalidade": nova_modalidade,
-                                "Revenda": nova_revenda,
-                                "Data Atualização": datetime.now().strftime("%d/%m/%Y %H:%M")
-                            }
-                            
-                            # Atualizar na planilha
-                            if update_sheet_data(client, spreadsheet_name, sheet_name, idx + 2, dados_atualizados):
-                                st.success("✅ Treinamento atualizado com sucesso!")
-                            else:
-                                st.error("❌ Erro ao atualizar treinamento.")
-                                
-                        except Exception as e:
-                            st.error(f"❌ Erro: {e}")
+                        dados_atualizados = {
+                            "Situação": nova_situacao,
+                            "Status": novo_status,
+                            "Modalidade": nova_modalidade,
+                            "Data Atualização": datetime.now().strftime("%d/%m/%Y %H:%M")
+                        }
+                        
+                        if update_sheet_data(client, spreadsheet_name, sheet_name, idx + 2, dados_atualizados):
+                            st.success("✅ Atualizado com sucesso!")
+                        else:
+                            st.error("❌ Erro ao atualizar")
         else:
-            st.warning("ℹ️ Nenhum treinamento cadastrado para atualizar.")
+            st.warning("Nenhum treinamento cadastrado")
     
     with tab4:
         st.header("🗑️ Exclusão de Treinamentos")
-        st.warning("⚠️ Área restrita - apenas para administradores")
+        st.warning("⚠️ Área restrita - apenas administradores")
         
-        if not client:
-            st.warning("🔒 Modo demonstração - Funcionalidade de exclusão disponível apenas com Google Sheets")
+        if client is None:
+            st.info("🔒 Funcionalidade disponível apenas com Google Sheets")
             return
         
-        # Verificar senha
         senha = st.text_input("Digite a senha para acesso:", type="password")
         
         if senha == "NMQ@2025":
-            # Carregar treinamentos
-            df_treinamentos = load_sheet_data(client, spreadsheet_name, sheet_name)
-            
             if not df_treinamentos.empty:
-                # Selecionar treinamento para excluir
                 treinamentos_lista = df_treinamentos.apply(
-                    lambda x: f"{x['Técnico']} - {x['Tipo de Treinamento']} - {x['Situação']}", axis=1
+                    lambda x: f"{x['Técnico']} - {x['Tipo de Treinamento']}", axis=1
                 ).tolist()
                 
                 treinamento_selecionado = st.selectbox("Selecione o treinamento para excluir:", treinamentos_lista)
                 
-                if treinamento_selecionado:
-                    # Mostrar preview do treinamento selecionado
+                if treinamento_selecionado and st.button("🗑️ Confirmar Exclusão"):
                     idx = treinamentos_lista.index(treinamento_selecionado)
-                    treinamento_data = df_treinamentos.iloc[idx]
-                    
-                    st.warning(f"📋 Treinamento selecionado para exclusão:")
-                    st.json(treinamento_data.to_dict())
-                    
-                    if st.button("🗑️ Confirmar Exclusão", type="secondary"):
-                        try:
-                            # Excluir da planilha
-                            if delete_from_sheet(client, spreadsheet_name, sheet_name, idx + 2):
-                                st.success("✅ Treinamento excluído com sucesso!")
-                                st.rerun()
-                            else:
-                                st.error("❌ Erro ao excluir treinamento.")
-                                
-                        except Exception as e:
-                            st.error(f"❌ Erro: {e}")
+                    if delete_from_sheet(client, spreadsheet_name, sheet_name, idx + 2):
+                        st.success("✅ Excluído com sucesso!")
+                    else:
+                        st.error("❌ Erro ao excluir")
             else:
-                st.warning("ℹ️ Nenhum treinamento cadastrado para excluir.")
+                st.warning("Nenhum treinamento para excluir")
         elif senha != "":
             st.error("❌ Senha incorreta!")
     
