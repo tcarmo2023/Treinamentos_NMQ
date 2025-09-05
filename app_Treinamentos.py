@@ -113,7 +113,7 @@ BASE_ENTREVISTA = ["OK", "-"]
 BASE_STATUS = ["Pendente", "Apto p/ Treinamento", "Concluído", "Convocado", "Aprovado via Entrevista"]
 BASE_SITUACAO = ["OK", "PENDENTE"]
 BASE_TREINAMENTO = ["JCB", "NMQ"]
-BASE_REVENDA = ["Recife", "Natal", "Fortaleza", "Petrolina"]
+BASE_REVENDA = ["Recife", "N Natal", "Fortaleza", "Petrolina"]
 
 # Matriz de tipos de treinamento com níveis, status e CLASSIFICAÇÃO
 MATRIZ_TREINAMENTOS = {
@@ -172,7 +172,7 @@ MATRIZ_TREINAMENTOS = {
         "classificação": "Mecânico I",
         "nível": "Técnico 160h",
         "status": [
-            "Desmontagem and Montagem",
+            "Desmontagem e Montagem",
             "Sistemas de Rodagem",
             "Sistemas Eixos",
             "Sistemas Freios",
@@ -185,7 +185,7 @@ MATRIZ_TREINAMENTOS = {
         "status": [
             "Tipos - Conv. Eletrônico",
             "Principio Funcionamento", 
-            "Desmontagem and Montagem",
+            "Desmontagem e Montagem",
             "Substituição de Sistemas"
         ]
     },
@@ -375,7 +375,7 @@ def atualizar_tecnico(indice, nome, telefone, email, classificacao, revenda):
     return True
 
 # Função para remover técnico
-def remover_tecnico(indice):
+def remouter_tecnico(indice):
     if 0 <= indice < len(st.session_state.BASE_COLABORADORES):
         st.session_state.BASE_COLABORADORES.pop(indice)
         return True
@@ -419,16 +419,12 @@ def main():
                 # Nome do técnico mais destacado
                 st.markdown(f"<h2 style='color: #1f77b4;'>{tecnico_info['Colaborador']}</h2>", unsafe_allow_html=True)
                 
-                col1, col2, col3 = st.columns(3)
+                col1, col2, col3, col4 = st.columns(4)
                 with col1:
                     st.info(f"**Classificação:** {tecnico_info['Classificação']}")
                 with col2:
-                    st.info(f"**Nível:** {tecnico_info['Nível']}")
-                with col3:
                     st.info(f"**Revenda:** {tecnico_info['Revenda']}")
-                
-                col4, col5 = st.columns(2)
-                with col4:
+                with col3:
                     telefone = tecnico_info['Telefone']
                     if telefone:
                         telefone_limpo = re.sub(r'\D', '', telefone)
@@ -436,63 +432,75 @@ def main():
                         st.info(f"**Telefone:** [{telefone}]({whatsapp_link})")
                     else:
                         st.info("**Telefone:** Não informado")
-                with col5:
+                with col4:
                     st.info(f"**Email:** {tecnico_info['Email']}")
 
             if not df_treinamentos.empty:
                 treinamentos_tecnico = df_treinamentos[df_treinamentos["Técnico"] == tecnico_selecionado]
                 if not treinamentos_tecnico.empty:
-                    treinamentos_ok = treinamentos_tecnico[treinamentos_tecnico["Situação"] == "OK"]
-                    treinamentos_pendentes = treinamentos_tecnico[treinamentos_tecnico["Situação"] == "PENDENTE"]
-
-                    if not treinamentos_ok.empty:
-                        st.subheader("✅ Treinamentos Concluídos (OK)")
-                        
-                        # Ordem das colunas solicitada
-                        colunas_ordenadas = [
-                            "Tipo de Treinamento", "Classificação", "Treinamento",
-                            "Classificação do Técnico", "Nível", "Revenda", "Categoria", "Situação",
-                            "Modalidade", "Entrevista", "Status", "Técnico", "Data Cadastro", "Data Atualização"
-                        ]
-                        
-                        # Filtrar apenas as colunas que existem no DataFrame
-                        colunas_existentes = [col for col in colunas_ordenadas if col in treinamentos_ok.columns]
-                        
-                        st.dataframe(treinamentos_ok[colunas_existentes])
-                        
-                        # Botão para exportar
-                        csv = treinamentos_ok[colunas_existentes].to_csv(index=False)
-                        st.download_button(
-                            label="📥 Exportar Treinamentos Concluídos",
-                            data=csv,
-                            file_name=f"treinamentos_concluidos_{tecnico_selecionado}.csv",
-                            mime="text/csv"
-                        )
+                    # Opção para mostrar/ocultar colunas
+                    st.subheader("📋 Treinamentos")
                     
-                    if not treinamentos_pendentes.empty:
-                        st.subheader("⏳ Treinamentos Pendentes")
+                    # Lista de todas as colunas disponíveis
+                    todas_colunas = [
+                        "Tipo de Treinamento", "Classificação", "Treinamento",
+                        "Classificação do Técnico", "Nível", "Revenda", "Categoria", "Situação",
+                        "Modalidade", "Entrevista", "Status", "Técnico", "Data Cadastro", "Data Atualização"
+                    ]
+                    
+                    # Filtrar apenas as colunas que existem no DataFrame
+                    colunas_existentes = [col for col in todas_colunas if col in treinamentos_tecnico.columns]
+                    
+                    # Checkbox para selecionar colunas a serem exibidas
+                    colunas_selecionadas = st.multiselect(
+                        "Mostrar/ocultar colunas:",
+                        options=colunas_existentes,
+                        default=colunas_existentes,
+                        key="colunas_treinamentos"
+                    )
+                    
+                    if colunas_selecionadas:
+                        st.dataframe(treinamentos_tecnico[colunas_selecionadas])
                         
-                        # Filtrar apenas as colunas que existem no DataFrame
-                        colunas_existentes = [col for col in colunas_ordenadas if col in treinamentos_pendentes.columns]
+                        # Separar treinamentos concluídos e pendentes
+                        treinamentos_ok = treinamentos_tecnico[treinamentos_tecnico["Situação"] == "OK"]
+                        treinamentos_pendentes = treinamentos_tecnico[treinamentos_tecnico["Situação"] == "PENDENTE"]
                         
-                        st.dataframe(treinamentos_pendentes[colunas_existentes])
+                        if not treinamentos_ok.empty:
+                            st.subheader("✅ Treinamentos Concluídos (OK)")
+                            st.dataframe(treinamentos_ok[colunas_selecionadas])
+                            
+                            # Botão para exportar
+                            csv = treinamentos_ok[colunas_selecionadas].to_csv(index=False)
+                            st.download_button(
+                                label="📥 Exportar Treinamentos Concluídos",
+                                data=csv,
+                                file_name=f"treinamentos_concluidos_{tecnico_selecionado}.csv",
+                                mime="text/csv"
+                            )
                         
-                        # Botão para exportar
-                        csv = treinamentos_pendentes[colunas_existentes].to_csv(index=False)
-                        st.download_button(
-                            label="📥 Exportar Treinamentos Pendentes",
-                            data=csv,
-                            file_name=f"treinamentos_pendentes_{tecnico_selecionado}.csv",
-                            mime="text/csv"
-                        )
+                        if not treinamentos_pendentes.empty:
+                            st.subheader("⏳ Treinamentos Pendentes")
+                            st.dataframe(treinamentos_pendentes[colunas_selecionadas])
+                            
+                            # Botão para exportar
+                            csv = treinamentos_pendentes[colunas_selecionadas].to_csv(index=False)
+                            st.download_button(
+                                label="📥 Exportar Treinamentos Pendentes",
+                                data=csv,
+                                file_name=f"treinamentos_pendentes_{tecnico_selecionado}.csv",
+                                mime="text/csv"
+                            )
 
-                    col_stat1, col_stat2, col_stat3 = st.columns(3)
-                    with col_stat1:
-                        st.metric("Total", len(treinamentos_tecnico))
-                    with col_stat2:
-                        st.metric("Concluídos", len(treinamentos_ok))
-                    with col_stat3:
-                        st.metric("Pendentes", len(treinamentos_pendentes))
+                        col_stat1, col_stat2, col_stat3 = st.columns(3)
+                        with col_stat1:
+                            st.metric("Total", len(treinamentos_tecnico))
+                        with col_stat2:
+                            st.metric("Concluídos", len(treinamentos_ok))
+                        with col_stat3:
+                            st.metric("Pendentes", len(treinamentos_pendentes))
+                    else:
+                        st.info("Selecione pelo menos uma coluna para visualizar.")
                 else:
                     st.warning("Nenhum treinamento encontrado para este técnico.")
             else:
@@ -587,7 +595,7 @@ def main():
             with col1:
                 treinamento = st.selectbox("Treinamento*", BASE_TREINAMENTO)
                 classificacao_tecnico = st.selectbox("Classificação do Técnico*", CLASSIFICACAO_TECNICO)
-                nivel_tecnico = st.selectbox("Nível*", NIVEL_TREINAMENTO)
+                nivel_tecnico = st.selectbox("Nível*", NIVEL_TREinamento)
                 situacao = st.selectbox("Situação*", BASE_SITUACAO)
                 categoria = st.selectbox("Categoria*", list(BASE_CATEGORIA.keys()))
             with col2:
@@ -790,7 +798,7 @@ def main():
                         st.json(tecnico_info)
                         
                         if st.button("🗑️ Confirmar Exclusão do Técnico"):
-                            if remover_tecnico(indice_tecnico):
+                            if remouter_tecnico(indice_tecnico):
                                 st.success("✅ Técnico excluído com sucesso!")
                                 st.rerun()
                             else:
@@ -806,6 +814,14 @@ def main():
         f"<div style='text-align: center; font-size: 11px; color: #666;'>"
         f"© {datetime.now().year} NORMAQ - Sistema de Gestão de Treinamentos • Versão 1.0 • "
         f"Atualizado em {get_brasilia_time().strftime('%d/%m/%Y %H:%M')}</div>",
+        unsafe_allow_html=True
+    )
+    
+    # Informações de contato
+    st.markdown(
+        f"<div style='text-align: center; font-size: 11px; color: #666; margin-top: 10px;'>"
+        f"Criado por Thiago Carmo - Especialista em Dados • "
+        f"Qualquer oportunidade entre em contato: (81) 99514-3900</div>",
         unsafe_allow_html=True
     )
 
