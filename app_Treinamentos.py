@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 import gspread
 from google.oauth2.service_account import Credentials
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
 import os
 import re
 import json
@@ -46,6 +46,11 @@ def get_google_creds():
     except Exception as e:
         st.sidebar.error(f"❌ Erro geral: {str(e)}")
         return None
+
+# Função para obter data/hora no fuso horário de Brasília
+def get_brasilia_time():
+    brasilia_tz = timezone(timedelta(hours=-3))
+    return datetime.now(brasilia_tz)
 
 # Dados fixos
 BASE_FUNCAO = [
@@ -110,11 +115,12 @@ BASE_ENTREVISTA = ["OK", "-"]
 BASE_STATUS = ["Pendente", "Apto p/ Treinamento", "Concluído", "Convocado", "Aprovado via Entrevista"]
 BASE_SITUACAO = ["OK", "PENDENTE"]
 BASE_TREINAMENTO = ["JCB", "NMQ"]
-BASE_REVENDA = ["Recife", "Natal", "Fortaleza", "Petrolina"]
+BASE_REVENDA = ["Recife", "N Natal", "Fortaleza", "Petrolina"]
 
-# Matriz de tipos de treinamento com níveis e status
+# Matriz de tipos de treinamento com níveis, status e CLASSIFICAÇÃO
 MATRIZ_TREINAMENTOS = {
     "Integração - 8h": {
+        "classificação": "Auxiliar Técnico 40h",
         "nível": "Auxiliar Técnico 40h",
         "status": [
             "História e Evolução JCB",
@@ -124,6 +130,7 @@ MATRIZ_TREINAMENTOS = {
         ]
     },
     "Tecnologias - 8h": {
+        "classificação": "Auxiliar Técnico 40h",
         "nível": "Auxiliar Técnico 40h", 
         "status": [
             "Hidráulica / Elétrica",
@@ -133,6 +140,7 @@ MATRIZ_TREINAMENTOS = {
         ]
     },
     "Condução Máquinas - 8h": {
+        "classificação": "Auxiliar Técnico 40h",
         "nível": "Auxiliar Técnico 40h",
         "status": [
             "Segurança",
@@ -141,6 +149,7 @@ MATRIZ_TREINAMENTOS = {
         ]
     },
     "Sistema Operacional Produtos Nacionais / Importados - 8h": {
+        "classificação": "Auxiliar Técnico 40h",
         "nível": "Auxiliar Técnico 40h",
         "status": [
             "Testes Funcionamento",
@@ -151,6 +160,7 @@ MATRIZ_TREINAMENTOS = {
         ]
     },
     "PMP - 8h": {
+        "classificação": "Auxiliar Técnico 40h",
         "nível": "Auxiliar Técnico 40h",
         "status": [
             "Tipos de Manutenção",
@@ -161,6 +171,7 @@ MATRIZ_TREINAMENTOS = {
         ]
     },
     "Conjunto Motriz - JCB - 40h": {
+        "classificação": "Técnico 160h",
         "nível": "Técnico 160h",
         "status": [
             "Desmontagem e Montagem",
@@ -171,6 +182,7 @@ MATRIZ_TREINAMENTOS = {
         ]
     },
     "Motores - JCB - 40h": {
+        "classificação": "Técnico 160h",
         "nível": "Técnico 160h",
         "status": [
             "Tipos - Conv. Eletrônico",
@@ -180,6 +192,7 @@ MATRIZ_TREINAMENTOS = {
         ]
     },
     "Sistemas Eletro - Hidráulicos THL e BHL - 40h": {
+        "classificação": "Técnico 160h",
         "nível": "Técnico 160h",
         "status": [
             "Conjuntos Motrizes",
@@ -189,6 +202,7 @@ MATRIZ_TREINAMENTOS = {
         ]
     },
     "Sistemas Eletro - Hidráulicos WLS e EXC - 40h": {
+        "classificação": "Técnico 160h",
         "nível": "Técnico 160h", 
         "status": [
             "Conjuntos Motrizes",
@@ -198,6 +212,7 @@ MATRIZ_TREINAMENTOS = {
         ]
     },
     "Diagnóstico Powetrain JCB - 40h": {
+        "classificação": "Técnico Diagnóstico 120h",
         "nível": "Técnico Diagnóstico 120h",
         "status": [
             "Motores",
@@ -206,6 +221,7 @@ MATRIZ_TREINAMENTOS = {
         ]
     },
     "Diagnóstico Sistemas Eletro-Hidráulicos Nacional - 40h": {
+        "classificação": "Técnico Diagnóstico 120h",
         "nível": "Técnico Diagnóstico 120h",
         "status": [
             "Mant. Componentes",
@@ -215,6 +231,7 @@ MATRIZ_TREINAMENTOS = {
         ]
     },
     "Diagnóstico Sistemas Eletro-Hidráulicos Importados - 40h": {
+        "classificação": "Técnico Diagnóstico 120h",
         "nível": "Técnico Diagnóstico 120h",
         "status": [
             "Mant. Componentes",
@@ -224,6 +241,7 @@ MATRIZ_TREINAMENTOS = {
         ]
     },
     "JTC": {
+        "classificação": "Técnico Master",
         "nível": "Técnico Master",
         "status": [
             "Atualização Técnica",
@@ -253,7 +271,7 @@ BASE_COLABORADORES = [
      "Email": "sergio.gomes@normaq.com.br", "Telefone": "+55 81 9247-3552"},
     {"Colaborador": "Icaro Cruz", "Classificação": "Mecânico I", "Unidades": "Natal",
      "Email": "icaro.cruz@normaq.com.br", "Telefone": "+55 84 9115-1029"},
-    {"Colaborador": "Jeorge Rodrigues", "Classificação": "Mecânico I", "Unidades": "Natal",
+    {"Colaborador": "Jeorge Rodrigues", "Classificação": "Mecânico I", "Unidades": "N Natal",
      "Email": "jeorge.rodrigues@normaq.com.br", "Telefone": "+55 84 9131-7495"},
     {"Colaborador": "Carlos Andre", "Classificação": "Mecânico I", "Unidades": "Fortaleza",
      "Email": "carlos.andre@normaq.com.br", "Telefone": "+55 85 9281-2340"},
@@ -388,10 +406,44 @@ def main():
 
                     if not treinamentos_ok.empty:
                         st.subheader("✅ Treinamentos Concluídos (OK)")
-                        st.dataframe(treinamentos_ok)
+                        
+                        # Ordem das colunas solicitada
+                        colunas_ordenadas = [
+                            "Tipo de Treinamento", "Classificação", "Treinamento",
+                            "Classificação do Técnico", "Revenda", "Categoria", "Situação",
+                            "Modalidade", "Entrevista", "Status", "Técnico", "Data Cadastro", "Data Atualização"
+                        ]
+                        
+                        # Filtrar apenas as colunas que existem no DataFrame
+                        colunas_existentes = [col for col in colunas_ordenadas if col in treinamentos_ok.columns]
+                        
+                        st.dataframe(treinamentos_ok[colunas_existentes])
+                        
+                        # Botão para exportar
+                        csv = treinamentos_ok[colunas_existentes].to_csv(index=False)
+                        st.download_button(
+                            label="📥 Exportar Treinamentos Concluídos",
+                            data=csv,
+                            file_name=f"treinamentos_concluidos_{tecnico_selecionado}.csv",
+                            mime="text/csv"
+                        )
+                    
                     if not treinamentos_pendentes.empty:
                         st.subheader("⏳ Treinamentos Pendentes")
-                        st.dataframe(treinamentos_pendentes)
+                        
+                        # Filtrar apenas as colunas que existem no DataFrame
+                        colunas_existentes = [col for col in colunas_ordenadas if col in treinamentos_pendentes.columns]
+                        
+                        st.dataframe(treinamentos_pendentes[colunas_existentes])
+                        
+                        # Botão para exportar
+                        csv = treinamentos_pendentes[colunas_existentes].to_csv(index=False)
+                        st.download_button(
+                            label="📥 Exportar Treinamentos Pendentes",
+                            data=csv,
+                            file_name=f"treinamentos_pendentes_{tecnico_selecionado}.csv",
+                            mime="text/csv"
+                        )
 
                     col_stat1, col_stat2, col_stat3 = st.columns(3)
                     with col_stat1:
@@ -469,9 +521,11 @@ def main():
         
         if tipo_selecionado:
             info_tipo = MATRIZ_TREINAMENTOS.get(tipo_selecionado, {})
+            classificacao = info_tipo.get("classificação", "Classificação não definida")
             nivel = info_tipo.get("nível", "Nível não definido")
             status_list = info_tipo.get("status", [])
             
+            st.info(f"**Classificação:** {classificacao}")
             st.info(f"**Nível do Treinamento:** {nivel}")
             
             if status_list:
@@ -536,7 +590,7 @@ def main():
                     "Entrevista": entrevista,
                     "Status": status,
                     "Técnico": tecnico,
-                    "Data Cadastro": datetime.now().strftime("%d/%m/%Y %H:%M")
+                    "Data Cadastro": get_brasilia_time().strftime("%d/%m/%Y %H:%M")
                 }
                 
                 if save_to_sheet(client, SPREADSHEET_NAME, SHEET_NAME, novo_treinamento):
@@ -557,6 +611,8 @@ def main():
                 with st.form("form_atualizacao"):
                     col1, col2 = st.columns(2)
                     with col1:
+                        nova_classificacao = st.selectbox("Classificação*", BASE_FUNCAO,
+                                                         index=BASE_FUNCAO.index(treinamento_data["Classificação do Técnico"]) if treinamento_data["Classificação do Técnico"] in BASE_FUNCAO else 0)
                         nova_situacao = st.selectbox("Situação", BASE_SITUACAO,
                                                      index=BASE_SITUACAO.index(treinamento_data["Situação"]))
                         novo_status = st.selectbox("Status", BASE_STATUS,
@@ -568,15 +624,19 @@ def main():
                                                        index=BASE_MODALIDADE.index(treinamento_data["Modalidade"]))
                         nova_revenda = st.selectbox("Revenda", BASE_REVENDA,
                                                     index=BASE_REVENDA.index(treinamento_data["Revenda"]))
+                        nova_categoria = st.selectbox("Categoria*", list(BASE_CATEGORIA.keys()),
+                                                     index=list(BASE_CATEGORIA.keys()).index(treinamento_data["Categoria"]) if treinamento_data["Categoria"] in BASE_CATEGORIA else 0)
                     submitted = st.form_submit_button("💾 Atualizar Treinamento")
                     if submitted:
                         dados_atualizados = {
+                            "Classificação do Técnico": nova_classificacao,
                             "Situação": nova_situacao,
                             "Status": novo_status,
                             "Entrevista": nova_entrevista,
                             "Modalidade": nova_modalidade,
                             "Revenda": nova_revenda,
-                            "Data Atualização": datetime.now().strftime("%d/%m/%Y %H:%M")
+                            "Categoria": nova_categoria,
+                            "Data Atualização": get_brasilia_time().strftime("%d/%m/%Y %H:%M")
                         }
                         if update_sheet_data(client, SPREADSHEET_NAME, SHEET_NAME, idx + 2, dados_atualizados):
                             st.success("✅ Treinamento atualizado com sucesso!")
@@ -616,7 +676,7 @@ def main():
     st.markdown(
         f"<div style='text-align: center; font-size: 11px; color: #666;'>"
         f"© {datetime.now().year} NORMAQ - Sistema de Gestão de Treinamentos • Versão 1.0 • "
-        f"Atualizado em {datetime.now().strftime('%d/%m/%Y %H:%M')}</div>",
+        f"Atualizado em {get_brasilia_time().strftime('%d/%m/%Y %H:%M')}</div>",
         unsafe_allow_html=True
     )
 
