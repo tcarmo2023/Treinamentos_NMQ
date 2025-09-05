@@ -172,7 +172,7 @@ MATRIZ_TREINAMENTOS = {
         "classificação": "Mecânico I",
         "nível": "Técnico 160h",
         "status": [
-            "Desmontagem e Montagem",
+            "Desmontagem and Montagem",
             "Sistemas de Rodagem",
             "Sistemas Eixos",
             "Sistemas Freios",
@@ -185,7 +185,7 @@ MATRIZ_TREINAMENTOS = {
         "status": [
             "Tipos - Conv. Eletrônico",
             "Principio Funcionamento", 
-            "Desmontagem e Montagem",
+            "Desmontagem and Montagem",
             "Substituição de Sistemas"
         ]
     },
@@ -250,48 +250,50 @@ MATRIZ_TREINAMENTOS = {
     }
 }
 
-BASE_COLABORADORES = [
-    {"Colaborador": "Ivanildo Benvindo", "Classificação": "Mecânico I", "Nível": "Técnico 160h", "Unidades": "Recife",
-     "Email": "ivanildo.benvindo@normaq.com.br", "Telefone": "+55 81 9119-9240"},
-    {"Colaborador": "Luiz Guilherme", "Classificação": "Mecânico II", "Nível": "Técnico 160h", "Unidades": "Recife",
-     "Email": "guilherme.santos@normaq.com.br", "Telefone": "+55 81 9786-0555"},
-    {"Colaborador": "Jesse Pereira", "Classificação": "Mecânico II", "Nível": "Técnico 160h", "Unidades": "Recife",
-     "Email": "jesse.pereira@normaq.com.br", "Telefone": "+55 81 9200-9598"},
-    {"Colaborador": "Clemerson Jose", "Classificação": "Mecânico I", "Nível": "Técnico 160h", "Unidades": "Recife",
-     "Email": "clemeson.jose@normaq.com.br", "Telefone": "+55 81 8942-1435"},
-    {"Colaborador": "Leandro Tenorio", "Classificação": "Mecânico I", "Nível": "Técnico 160h", "Unidades": "Recife",
-     "Email": "leandro.tenorio@normaq.com.br", "Telefone": "+55 81 9847-0771"},
-    {"Colaborador": "Roberto Gomes", "Classificação": "Mecânico I", "Nível": "Técnico 160h", "Unidades": "Recife",
-     "Email": "roberto.gomes@normaq.com.br", "Telefone": "+55 81 8621-6679"},
-    {"Colaborador": "Rodolfo Monteiro", "Classificação": "Mecânico II", "Nível": "Técnico 160h", "Unidades": "Recife",
-     "Email": "rodolfo.monteiro@normaq.com.br", "Telefone": "+55 81 7330-9016"},
-    {"Colaborador": "Sergio Gomes", "Classificação": "JTC", "Nível": "Formação JTC", "Unidades": "Recife",
-     "Email": "sergio.gomes@normaq.com.br", "Telefone": "+55 81 9247-3552"},
-    {"Colaborador": "Icaro Cruz", "Classificação": "Mecânico I", "Nível": "Técnico 160h", "Unidades": "Natal",
-     "Email": "icaro.cruz@normaq.com.br", "Telefone": "+55 84 9115-1029"},
-    {"Colaborador": "Jeorge Rodrigues", "Classificação": "Mecânico I", "Nível": "Técnico 160h", "Unidades": "N Natal",
-     "Email": "jeorge.rodrigues@normaq.com.br", "Telefone": "+55 84 9131-7495"},
-    {"Colaborador": "Carlos Andre", "Classificação": "Mecânico I", "Nível": "Técnico 160h", "Unidades": "Fortaleza",
-     "Email": "carlos.andre@normaq.com.br", "Telefone": "+55 85 9281-2340"},
-    {"Colaborador": "Cleison Santos", "Classificação": "Mecânico I", "Nível": "Técnico 160h", "Unidades": "Fortaleza",
-     "Email": "cleison.santos@normaq.com.br", "Telefone": "+55 85 9142-4501"},
-    {"Colaborador": "Carlos Estevam", "Classificação": "Auxiliar de Mecânico", "Nível": "Auxiliar Técnico 40h", "Unidades": "Fortaleza",
-     "Email": "carlos.estevam@normaq.com.br", "Telefone": "+55 85 9265-5102"},
-    {"Colaborador": "Emerson Almeida", "Classificação": "Mecânico Champion", "Nível": "Técnico Master", "Unidades": "Fortaleza",
-     "Email": "emerson.almeida@normaq.com.br", "Telefone": "+55 85 9119-9171"},
-    {"Colaborador": "Daniel Leite", "Classificação": "JTC", "Nível": "Formação JTC", "Unidades": "Fortaleza",
-     "Email": "daniel.leite@normaq.com.br", "Telefone": "+55 85 9117-6864"},
-    {"Colaborador": "Willian Lucas", "Classificação": "Mecânico I", "Nível": "Técnico 160h", "Unidades": "Petrolina",
-     "Email": "willian.lucas@normaq.com.br", "Telefone": "+55 87 8863-1640"},
-    {"Colaborador": "Adriano Santos", "Classificação": "Mecânico I", "Nível": "Técnico 160h", "Unidades": "Petrolina",
-     "Email": "adriano.santos@normaq.com.br", "Telefone": "+55 87 9146-3338"},
-    {"Colaborador": "Francisco Neto", "Classificação": "Auxiliar de Mecânico", "Nível": "Auxiliar Técnico 40h", "Unidades": "Recife",
-     "Email": "francisco.neto@normaq.com.br", "Telefone": ""},
-    {"Colaborador": "Francisco Leonardo", "Classificação": "Auxiliar de Mecânico", "Nível": "Auxiliar Técnico 40h", "Unidades": "Fortaleza",
-     "Email": "francisco.batista@normaq.com.br", "Telefone": ""},
-    {"Colaborador": "Francisco Gabriel", "Classificação": "Auxiliar de Mecânico", "Nível": "Auxiliar Técnico 40h", "Unidades": "Fortaleza",
-     "Email": "francisco.alves@normaq.com.br", "Telefone": ""}
-]
+# Lista inicial de colaboradores (será gerenciada via session_state)
+if 'BASE_COLABORADORES' not in st.session_state:
+    st.session_state.BASE_COLABORADORES = [
+        {"Colaborador": "Ivanildo Benvindo", "Classificação": "Mecânico I", "Nível": "Técnico 160h", "Revenda": "Recife",
+         "Email": "ivanildo.benvindo@normaq.com.br", "Telefone": "+55 81 9119-9240"},
+        {"Colaborador": "Luiz Guilherme", "Classificação": "Mecânico II", "Nível": "Técnico 160h", "Revenda": "Recife",
+         "Email": "guilherme.santos@normaq.com.br", "Telefone": "+55 81 9786-0555"},
+        {"Colaborador": "Jesse Pereira", "Classificação": "Mecânico II", "Nível": "Técnico 160h", "Revenda": "Recife",
+         "Email": "jesse.pereira@normaq.com.br", "Telefone": "+55 81 9200-9598"},
+        {"Colaborador": "Clemerson Jose", "Classificação": "Mecânico I", "Nível": "Técnico 160h", "Revenda": "Recife",
+         "Email": "clemeson.jose@normaq.com.br", "Telefone": "+55 81 8942-1435"},
+        {"Colaborador": "Leandro Tenorio", "Classificação": "Mecânico I", "Nível": "Técnico 160h", "Revenda": "Recife",
+         "Email": "leandro.tenorio@normaq.com.br", "Telefone": "+55 81 9847-0771"},
+        {"Colaborador": "Roberto Gomes", "Classificação": "Mecânico I", "Nível": "Técnico 160h", "Revenda": "Recife",
+         "Email": "roberto.gomes@normaq.com.br", "Telefone": "+55 81 8621-6679"},
+        {"Colaborador": "Rodolfo Monteiro", "Classificação": "Mecânico II", "Nível": "Técnico 160h", "Revenda": "Recife",
+         "Email": "rodolfo.monteiro@normaq.com.br", "Telefone": "+55 81 7330-9016"},
+        {"Colaborador": "Sergio Gomes", "Classificação": "JTC", "Nível": "Formação JTC", "Revenda": "Recife",
+         "Email": "sergio.gomes@normaq.com.br", "Telefone": "+55 81 9247-3552"},
+        {"Colaborador": "Icaro Cruz", "Classificação": "Mecânico I", "Nível": "Técnico 160h", "Revenda": "Natal",
+         "Email": "icaro.cruz@normaq.com.br", "Telefone": "+55 84 9115-1029"},
+        {"Colaborador": "Jeorge Rodrigues", "Classificação": "Mecânico I", "Nível": "Técnico 160h", "Revenda": "N Natal",
+         "Email": "jeorge.rodrigues@normaq.com.br", "Telefone": "+55 84 9131-7495"},
+        {"Colaborador": "Carlos Andre", "Classificação": "Mecânico I", "Nível": "Técnico 160h", "Revenda": "Fortaleza",
+         "Email": "carlos.andre@normaq.com.br", "Telefone": "+55 85 9281-2340"},
+        {"Colaborador": "Cleison Santos", "Classificação": "Mecânico I", "Nível": "Técnico 160h", "Revenda": "Fortaleza",
+         "Email": "cleison.santos@normaq.com.br", "Telefone": "+55 85 9142-4501"},
+        {"Colaborador": "Carlos Estevam", "Classificação": "Auxiliar de Mecânico", "Nível": "Auxiliar Técnico 40h", "Revenda": "Fortaleza",
+         "Email": "carlos.estevam@normaq.com.br", "Telefone": "+55 85 9265-5102"},
+        {"Colaborador": "Emerson Almeida", "Classificação": "Mecânico Champion", "Nível": "Técnico Master", "Revenda": "Fortaleza",
+         "Email": "emerson.almeida@normaq.com.br", "Telefone": "+55 85 9119-9171"},
+        {"Colaborador": "Daniel Leite", "Classificação": "JTC", "Nível": "Formação JTC", "Revenda": "Fortaleza",
+         "Email": "daniel.leite@normaq.com.br", "Telefone": "+55 85 9117-6864"},
+        {"Colaborador": "Willian Lucas", "Classificação": "Mecânico I", "Nível": "Técnico 160h", "Revenda": "Petrolina",
+         "Email": "willian.lucas@normaq.com.br", "Telefone": "+55 87 8863-1640"},
+        {"Colaborador": "Adriano Santos", "Classificação": "Mecânico I", "Nível": "Técnico 160h", "Revenda": "Petrolina",
+         "Email": "adriano.santos@normaq.com.br", "Telefone": "+55 87 9146-3338"},
+        {"Colaborador": "Francisco Neto", "Classificação": "Auxiliar de Mecânico", "Nível": "Auxiliar Técnico 40h", "Revenda": "Recife",
+         "Email": "francisco.neto@normaq.com.br", "Telefone": ""},
+        {"Colaborador": "Francisco Leonardo", "Classificação": "Auxiliar de Mecânico", "Nível": "Auxiliar Técnico 40h", "Revenda": "Fortaleza",
+         "Email": "francisco.batista@normaq.com.br", "Telefone": ""},
+        {"Colaborador": "Francisco Gabriel", "Classificação": "Auxiliar de Mecânico", "Nível": "Auxiliar Técnico 40h", "Revenda": "Fortaleza",
+         "Email": "francisco.alves@normaq.com.br", "Telefone": ""}
+    ]
 
 # Funções auxiliares
 def load_sheet_data(client, spreadsheet_name, sheet_name):
@@ -347,6 +349,38 @@ def delete_from_sheet(client, spreadsheet_name, sheet_name, row_index):
         st.error("Erro ao excluir dados")
         return False
 
+# Função para adicionar técnico
+def adicionar_tecnico(nome, telefone, email, classificacao, revenda):
+    novo_tecnico = {
+        "Colaborador": nome,
+        "Telefone": telefone,
+        "Email": email,
+        "Classificação": classificacao,
+        "Nível": CATEGORIA_NIVEIS.get(classificacao, ""),
+        "Revenda": revenda
+    }
+    st.session_state.BASE_COLABORADORES.append(novo_tecnico)
+    return True
+
+# Função para atualizar técnico
+def atualizar_tecnico(indice, nome, telefone, email, classificacao, revenda):
+    st.session_state.BASE_COLABORADORES[indice] = {
+        "Colaborador": nome,
+        "Telefone": telefone,
+        "Email": email,
+        "Classificação": classificacao,
+        "Nível": CATEGORIA_NIVEIS.get(classificacao, ""),
+        "Revenda": revenda
+    }
+    return True
+
+# Função para remover técnico
+def remover_tecnico(indice):
+    if 0 <= indice < len(st.session_state.BASE_COLABORADORES):
+        st.session_state.BASE_COLABORADORES.pop(indice)
+        return True
+    return False
+
 # Função principal
 def main():
     st.title("📚 Sistema de Gestão de Treinamentos de Técnicos - NORMAQ")
@@ -366,17 +400,21 @@ def main():
         st.error("❌ Erro de conexão")
         return
 
-    # Abas - Corrigido: agora temos 6 variáveis para 6 abas
-    tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs(["📊 Consulta Técnicos", "🔍 Consulta Categoria", "📋 Consulta Tipo", "➕ Cadastro", "✏️ Atualização", "🗑️ Exclusão"])
+    # Abas - Agora temos 9 abas com as novas funcionalidades
+    tab1, tab2, tab3, tab4, tab5, tab6, tab7, tab8, tab9 = st.tabs([
+        "📊 Consulta Técnicos", "🔍 Consulta Categoria", "📋 Consulta Tipo", 
+        "➕ Cadastro Treinamento", "✏️ Atualização Treinamento", "🗑️ Exclusão Treinamento",
+        "👨‍🔧 Cadastro Técnico", "⚙️ Ajuste Técnico", "🗑️ Exclusão Técnico"
+    ])
 
     # Consulta por Técnicos
     with tab1:
         st.header("👨‍🔧 Consulta por Técnicos")
-        tecnicos = [t["Colaborador"] for t in BASE_COLABORADORES]
-        tecnico_selecionado = st.selectbox("Selecione o técnico:", tecnicos)
+        tecnicos = [t["Colaborador"] for t in st.session_state.BASE_COLABORADORES]
+        tecnico_selecionado = st.selectbox("Selecione o técnico:", tecnicos, key="consulta_tecnico")
         
         if tecnico_selecionado:
-            tecnico_info = next((t for t in BASE_COLABORADORES if t["Colaborador"] == tecnico_selecionado), None)
+            tecnico_info = next((t for t in st.session_state.BASE_COLABORADORES if t["Colaborador"] == tecnico_selecionado), None)
             if tecnico_info:
                 # Nome do técnico mais destacado
                 st.markdown(f"<h2 style='color: #1f77b4;'>{tecnico_info['Colaborador']}</h2>", unsafe_allow_html=True)
@@ -387,7 +425,7 @@ def main():
                 with col2:
                     st.info(f"**Nível:** {tecnico_info['Nível']}")
                 with col3:
-                    st.info(f"**Unidade:** {tecnico_info['Unidades']}")
+                    st.info(f"**Revenda:** {tecnico_info['Revenda']}")
                 
                 col4, col5 = st.columns(2)
                 with col4:
@@ -464,7 +502,7 @@ def main():
     with tab2:
         st.header("🔍 Consulta por Categoria")
         categorias = list(BASE_CATEGORIA.keys())
-        categoria_selecionada = st.selectbox("Selecione a categoria:", categorias)
+        categoria_selecionada = st.selectbox("Selecione a categoria:", categorias, key="consulta_categoria")
         
         if categoria_selecionada:
             # Mostrar nome da categoria
@@ -474,23 +512,8 @@ def main():
             if not df_treinamentos.empty:
                 treinamentos_categoria = df_treinamentos[df_treinamentos["Categoria"] == categoria_selecionada]
                 
-                if not treinamentos_categoria.empty:
-                    # Agrupar por classificação para mostrar os níveis
-                    classificacoes = treinamentos_categoria["Classificação do Técnico"].unique()
-                    
-                    st.subheader("📊 Níveis dos Técnicos com Treinamento")
-                    for classificacao in classificacoes:
-                        nivel = CATEGORIA_NIVEIS.get(classificacao, "Nível não definido")
-                        tecnicos_desta_classificacao = treinamentos_categoria[
-                            treinamentos_categoria["Classificação do Técnico"] == classificacao
-                        ]["Técnico"].unique()
-                        
-                        st.write(f"**{classificacao}** → **{nivel}**:")
-                        for tecnico in tecnicos_desta_classificacao:
-                            st.markdown(f"• {tecnico}")
-                
                 tecnicos_com_treinamento = treinamentos_categoria["Técnico"].unique().tolist()
-                todos_tecnicos = [t["Colaborador"] for t in BASE_COLABORADORES]
+                todos_tecnicos = [t["Colaborador"] for t in st.session_state.BASE_COLABORADORES]
                 tecnicos_sem_treinamento = [t for t in todos_tecnicos if t not in tecnicos_com_treinamento]
 
                 col1, col2 = st.columns(2)
@@ -499,8 +522,8 @@ def main():
                     if tecnicos_com_treinamento:
                         for tecnico in tecnicos_com_treinamento:
                             # Encontrar a classificação do técnico
-                            classif_tecnico = next((t["Classificação"] for t in BASE_COLABORADORES if t["Colaborador"] == tecnico), "N/A")
-                            nivel_tecnico = next((t["Nível"] for t in BASE_COLABORADORES if t["Colaborador"] == tecnico), "N/A")
+                            classif_tecnico = next((t["Classificação"] for t in st.session_state.BASE_COLABORADORES if t["Colaborador"] == tecnico), "N/A")
+                            nivel_tecnico = next((t["Nível"] for t in st.session_state.BASE_COLABORADORES if t["Colaborador"] == tecnico), "N/A")
                             st.markdown(f"• **{tecnico}** ({classif_tecnico} - {nivel_tecnico})")
                     else:
                         st.write("Nenhum técnico com treinamento nesta categoria")
@@ -510,8 +533,8 @@ def main():
                     if tecnicos_sem_treinamento:
                         for tecnico in tecnicos_sem_treinamento:
                             # Encontrar a classificação do técnico
-                            classif_tecnico = next((t["Classificação"] for t in BASE_COLABORADORES if t["Colaborador"] == tecnico), "N/A")
-                            nivel_tecnico = next((t["Nível"] for t in BASE_COLABORADORES if t["Colaborador"] == tecnico), "N/A")
+                            classif_tecnico = next((t["Classificação"] for t in st.session_state.BASE_COLABORADORES if t["Colaborador"] == tecnico), "N/A")
+                            nivel_tecnico = next((t["Nível"] for t in st.session_state.BASE_COLABORADORES if t["Colaborador"] == tecnico), "N/A")
                             st.markdown(f"• **{tecnico}** ({classif_tecnico} - {nivel_tecnico})")
                     else:
                         st.write("Todos os técnicos possuem treinamento nesta categoria")
@@ -520,16 +543,11 @@ def main():
     with tab3:
         st.header("📋 Consulta por Tipo de Treinamento")
         tipos_treinamento = list(MATRIZ_TREINAMENTOS.keys())
-        tipo_selecionado = st.selectbox("Selecione o tipo de treinamento:", tipos_treinamento)
+        tipo_selecionado = st.selectbox("Selecione o tipo de treinamento:", tipos_treinamento, key="consulta_tipo")
         
         if tipo_selecionado:
             info_tipo = MATRIZ_TREINAMENTOS.get(tipo_selecionado, {})
-            classificacao = info_tipo.get("classificação", "Classificação não definida")
-            nivel = info_tipo.get("nível", "Nível não definido")
             status_list = info_tipo.get("status", [])
-            
-            st.info(f"**Classificação:** {classificacao}")
-            st.info(f"**Nível do Treinamento:** {nivel}")
             
             if status_list:
                 st.subheader("📝 Status do Treinamento")
@@ -550,7 +568,7 @@ def main():
                 else:
                     st.info("Nenhum técnico concluiu este treinamento ainda")
 
-    # Cadastro
+    # Cadastro de Treinamento
     with tab4:
         st.header("➕ Cadastro de Novo Treinamento")
         
@@ -578,7 +596,7 @@ def main():
                 entrevista = st.selectbox("Entrevista*", BASE_ENTREVISTA)
                 status = st.selectbox("Status*", BASE_STATUS)
                 revenda = st.selectbox("Revenda*", BASE_REVENDA)
-                tecnico = st.selectbox("Técnico*", [t["Colaborador"] for t in BASE_COLABORADORES])
+                tecnico = st.selectbox("Técnico*", [t["Colaborador"] for t in st.session_state.BASE_COLABORADORES])
             
             submitted = st.form_submit_button("✅ Cadastrar Treinamento")
 
@@ -603,13 +621,13 @@ def main():
                 else:
                     st.error("❌ Erro ao cadastrar treinamento.")
 
-    # Atualização
+    # Atualização de Treinamento
     with tab5:
         st.header("✏️ Atualização de Treinamentos")
         if not df_treinamentos.empty:
             treinamentos_lista = df_treinamentos.apply(
                 lambda x: f"{x['Técnico']} - {x['Tipo de Treinamento']} - {x['Situação']}", axis=1).tolist()
-            treinamento_selecionado = st.selectbox("Selecione o treinamento para atualizar:", treinamentos_lista)
+            treinamento_selecionado = st.selectbox("Selecione o treinamento para atualizar:", treinamentos_lista, key="atualiza_treinamento")
             if treinamento_selecionado:
                 idx = treinamentos_lista.index(treinamento_selecionado)
                 treinamento_data = df_treinamentos.iloc[idx]
@@ -654,15 +672,15 @@ def main():
         else:
             st.warning("Nenhum treinamento cadastrado.")
 
-    # Exclusão
+    # Exclusão de Treinamento
     with tab6:
         st.header("🗑️ Exclusão de Treinamentos")
         if not df_treinamentos.empty:
-            senha = st.text_input("Digite a senha para acesso:", type="password")
+            senha = st.text_input("Digite a senha para acesso:", type="password", key="senha_exclusao_treinamento")
             if senha == "NMQ@2025":
                 treinamentos_lista = df_treinamentos.apply(
                     lambda x: f"{x['Técnico']} - {x['Tipo de Treinamento']} - {x['Situação']}", axis=1).tolist()
-                treinamento_selecionado = st.selectbox("Selecione o treinamento para excluir:", treinamentos_lista)
+                treinamento_selecionado = st.selectbox("Selecione o treinamento para excluir:", treinamentos_lista, key="exclui_treinamento")
                 if treinamento_selecionado:
                     idx = treinamentos_lista.index(treinamento_selecionado)
                     treinamento_data = df_treinamentos.iloc[idx]
@@ -678,6 +696,109 @@ def main():
                 st.error("❌ Senha incorreta!")
         else:
             st.warning("Nenhum treinamento cadastrado.")
+
+    # Cadastro de Técnico
+    with tab7:
+        st.header("👨‍🔧 Cadastro de Novo Técnico")
+        
+        if 'tecnico_submitted' not in st.session_state:
+            st.session_state.tecnico_submitted = False
+            
+        if st.session_state.tecnico_submitted:
+            st.success("🎉 Técnico cadastrado com sucesso!")
+            time.sleep(2)
+            st.session_state.tecnico_submitted = False
+            st.rerun()
+        
+        with st.form("form_cadastro_tecnico", clear_on_submit=True):
+            col1, col2 = st.columns(2)
+            with col1:
+                nome_tecnico = st.text_input("Nome do Técnico*")
+                telefone_tecnico = st.text_input("Telefone")
+                email_tecnico = st.text_input("Email*")
+            with col2:
+                classificacao_tecnico = st.selectbox("Classificação do Técnico*", CLASSIFICACAO_TECNICO)
+                revenda_tecnico = st.selectbox("Revenda*", BASE_REVENDA)
+            
+            submitted = st.form_submit_button("✅ Cadastrar Técnico")
+
+            if submitted:
+                if not nome_tecnico or not email_tecnico:
+                    st.error("❌ Nome e Email são obrigatórios!")
+                else:
+                    if adicionar_tecnico(nome_tecnico, telefone_tecnico, email_tecnico, classificacao_tecnico, revenda_tecnico):
+                        st.session_state.tecnico_submitted = True
+                    else:
+                        st.error("❌ Erro ao cadastrar técnico.")
+
+    # Ajuste de Técnico
+    with tab8:
+        st.header("⚙️ Ajuste de Cadastro do Técnico")
+        
+        tecnicos = [t["Colaborador"] for t in st.session_state.BASE_COLABORADORES]
+        if tecnicos:
+            tecnico_selecionado = st.selectbox("Selecione o técnico para ajustar:", tecnicos, key="ajuste_tecnico")
+            
+            if tecnico_selecionado:
+                tecnico_info = next((t for t in st.session_state.BASE_COLABORADORES if t["Colaborador"] == tecnico_selecionado), None)
+                if tecnico_info:
+                    indice_tecnico = st.session_state.BASE_COLABORADORES.index(tecnico_info)
+                    
+                    with st.form("form_ajuste_tecnico"):
+                        col1, col2 = st.columns(2)
+                        with col1:
+                            nome_tecnico = st.text_input("Nome do Técnico*", value=tecnico_info["Colaborador"])
+                            telefone_tecnico = st.text_input("Telefone", value=tecnico_info["Telefone"])
+                            email_tecnico = st.text_input("Email*", value=tecnico_info["Email"])
+                        with col2:
+                            classificacao_tecnico = st.selectbox("Classificação do Técnico*", CLASSIFICACAO_TECNICO, 
+                                                                index=CLASSIFICACAO_TECNICO.index(tecnico_info["Classificação"]) if tecnico_info["Classificação"] in CLASSIFICACAO_TECNICO else 0)
+                            revenda_tecnico = st.selectbox("Revenda*", BASE_REVENDA, 
+                                                          index=BASE_REVENDA.index(tecnico_info["Revenda"]) if tecnico_info["Revenda"] in BASE_REVENDA else 0)
+                        
+                        submitted = st.form_submit_button("💾 Atualizar Técnico")
+                        
+                        if submitted:
+                            if not nome_tecnico or not email_tecnico:
+                                st.error("❌ Nome e Email são obrigatórios!")
+                            else:
+                                if atualizar_tecnico(indice_tecnico, nome_tecnico, telefone_tecnico, email_tecnico, classificacao_tecnico, revenda_tecnico):
+                                    st.success("✅ Técnico atualizado com sucesso!")
+                                    st.rerun()
+                                else:
+                                    st.error("❌ Erro ao atualizar técnico.")
+        else:
+            st.warning("Nenhum técnico cadastrado.")
+
+    # Exclusão de Técnico
+    with tab9:
+        st.header("🗑️ Exclusão de Técnico")
+        
+        tecnicos = [t["Colaborador"] for t in st.session_state.BASE_COLABORADORES]
+        if tecnicos:
+            senha = st.text_input("Digite a senha para acesso:", type="password", key="senha_exclusao_tecnico")
+            
+            if senha == "NMQ@2025":
+                tecnico_selecionado = st.selectbox("Selecione o técnico para excluir:", tecnicos, key="exclui_tecnico")
+                
+                if tecnico_selecionado:
+                    tecnico_info = next((t for t in st.session_state.BASE_COLABORADORES if t["Colaborador"] == tecnico_selecionado), None)
+                    if tecnico_info:
+                        indice_tecnico = st.session_state.BASE_COLABORADORES.index(tecnico_info)
+                        
+                        st.warning("📋 Técnico selecionado para exclusão:")
+                        st.json(tecnico_info)
+                        
+                        if st.button("🗑️ Confirmar Exclusão do Técnico"):
+                            if remover_tecnico(indice_tecnico):
+                                st.success("✅ Técnico excluído com sucesso!")
+                                st.rerun()
+                            else:
+                                st.error("❌ Erro ao excluir técnico.")
+            elif senha != "":
+                st.error("❌ Senha incorreta!")
+        else:
+            st.warning("Nenhum técnico cadastrado.")
 
     # Rodapé
     st.markdown("---")
