@@ -64,6 +64,21 @@ BASE_CATEGORIA = {
     "OUTROS": "Sem Dados"
 }
 
+# Níveis das categorias
+CATEGORIA_NIVEIS = {
+    "THL": "Técnico 160h",
+    "SSL": "Técnico 160h", 
+    "EXC": "Técnico 160h",
+    "BHL": "Técnico 160h",
+    "MINI": "Técnico 160h",
+    "WLS": "Técnico 160h",
+    "CPTN": "Técnico 160h",
+    "THL e BHL": "Técnico 160h",
+    "WLS e EXC": "Técnico 160h",
+    "TODAS": "Técnico Master",
+    "OUTROS": "Sem Nível Definido"
+}
+
 BASE_TIPO_TREINAMENTO = [
     "Integração - 8h", "Tecnologias - 8h", "Condução Máquinas - 8h",
     "Sistema Operacional Produtos Nacionais / Importados - 8h", "PMP - 8h",
@@ -84,8 +99,130 @@ BASE_MODALIDADE = ["A Definir", "Presencial", "Online"]
 BASE_ENTREVISTA = ["OK", "-"]
 BASE_STATUS = ["Pendente", "Apto p/ Treinamento", "Concluído", "Convocado", "Aprovado via Entrevista"]
 BASE_SITUACAO = ["OK", "PENDENTE"]
-BASE_TREINAMENTO = ["JCB", "NMQ"]
+BASE_TREINamento = ["JCB", "NMQ"]
 BASE_REVENDA = ["Recife", "Natal", "Fortaleza", "Petrolina"]
+
+# Matriz de tipos de treinamento com níveis e status
+MATRIZ_TREINAMENTOS = {
+    "Integração - 8h": {
+        "nível": "Auxiliar Técnico 40h",
+        "status": [
+            "História e Evolução JCB",
+            "Missão / Visão / Cultura", 
+            "S.S.M.A",
+            "Tipos Modelos de Máquinas Nacionais e Importadas"
+        ]
+    },
+    "Tecnologias - 8h": {
+        "nível": "Auxiliar Técnico 40h", 
+        "status": [
+            "Hidráulica / Elétrica",
+            "Grandezas e Medições",
+            "Mecânicas",
+            "Grandezas, Medições, Elementos de Máquinas, Fixação, Ferramentas"
+        ]
+    },
+    "Condução Máquinas - 8h": {
+        "nível": "Auxiliar Técnico 40h",
+        "status": [
+            "Segurança",
+            "Check List", 
+            "Condução 1 de Cada Família - Nacional e Importados"
+        ]
+    },
+    "Sistema Operacional Produtos Nacionais / Importados - 8h": {
+        "nível": "Auxiliar Técnico 40h",
+        "status": [
+            "Testes Funcionamento",
+            "Documentação",
+            "Acessórios",
+            "Suporte Técnico",
+            "Machine Health Check"
+        ]
+    },
+    "PMP - 8h": {
+        "nível": "Auxiliar Técnico 40h",
+        "status": [
+            "Tipos de Manutenção",
+            "Portal JDS",
+            "Preventiva Nacional - Roda e Esteira",
+            "Preventiva Importadas - Hidrostática", 
+            "Live Link"
+        ]
+    },
+    "Conjunto Motriz - JCB - 40h": {
+        "nível": "Técnico 160h",
+        "status": [
+            "Desmontagem e Montagem",
+            "Sistemas de Rodagem",
+            "Sistemas Eixos",
+            "Sistemas Freios",
+            "Sistemas Transmissão"
+        ]
+    },
+    "Motores - JCB - 40h": {
+        "nível": "Técnico 160h",
+        "status": [
+            "Tipos - Conv. Eletrônico",
+            "Principio Funcionamento", 
+            "Desmontagem e Montagem",
+            "Substituição de Sistemas"
+        ]
+    },
+    "Sistemas Eletro - Hidráulicos THL e BHL - 40h": {
+        "nível": "Técnico 160h",
+        "status": [
+            "Conjuntos Motrizes",
+            "Sistemas Operacionais",
+            "Acessórios",
+            "Substituição de Componentes"
+        ]
+    },
+    "Sistemas Eletro - Hidráulicos WLS e EXC - 40h": {
+        "nível": "Técnico 160h", 
+        "status": [
+            "Conjuntos Motrizes",
+            "Sistemas Operacionais",
+            "Acessórios",
+            "Substituição de Componentes"
+        ]
+    },
+    "Diagnóstico Powetrain JCB - 40h": {
+        "nível": "Técnico Diagnóstico 120h",
+        "status": [
+            "Motores",
+            "Conjuntos Motriz",
+            "Service Master"
+        ]
+    },
+    "Diagnóstico Sistemas Eletro-Hidráulicos Nacional - 40h": {
+        "nível": "Técnico Diagnóstico 120h",
+        "status": [
+            "Mant. Componentes",
+            "Motores / Conj. Motriz",
+            "Sistemas Operacionais",
+            "Service Master"
+        ]
+    },
+    "Diagnóstico Sistemas Eletro-Hidráulicos Importados - 40h": {
+        "nível": "Técnico Diagnóstico 120h",
+        "status": [
+            "Mant. Componentes",
+            "Motores / Conj. Motriz",
+            "Sistemas Operacionais", 
+            "Service Master"
+        ]
+    },
+    "JTC": {
+        "nível": "Técnico Master",
+        "status": [
+            "Atualização Técnica",
+            "Experiência Comprovada",
+            "Competência Pessoais",
+            "Multiplicador Interno"
+        ]
+    }
+}
 
 BASE_COLABORADORES = [
     {"Colaborador": "Ivanildo Benvindo", "Classificação": "Mecânico I", "Unidades": "Recife",
@@ -198,70 +335,78 @@ def main():
         SPREADSHEET_NAME = "Treinamentos"
         SHEET_NAME = "Página1"
         df_treinamentos = load_sheet_data(client, SPREADSHEET_NAME, SHEET_NAME)
-        st.success("✅ Conectado ao Google Sheets com sucesso!")
+        # Removida a mensagem de sucesso de conexão conforme solicitado
     except:
         st.error("❌ Erro de conexão")
         return
 
-    # Abas
-    tab1, tab2, tab3, tab4 = st.tabs(["📊 Consulta", "➕ Cadastro", "✏️ Atualização", "🗑️ Exclusão"])
+    # Abas - Corrigido: agora temos 6 variáveis para 6 abas
+    tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs(["📊 Consulta Técnicos", "🔍 Consulta Categoria", "📋 Consulta Tipo", "➕ Cadastro", "✏️ Atualização", "🗑️ Exclusão"])
 
-    # Consulta
+    # Consulta por Técnicos
     with tab1:
-        st.header("📊 Consulta de Treinamentos")
-        consulta_por = st.radio("Consultar por:", ["Técnicos", "Categoria"], horizontal=True)
-
-        if consulta_por == "Técnicos":
-            tecnicos = [t["Colaborador"] for t in BASE_COLABORADORES]
-            tecnico_selecionado = st.selectbox("Selecione o técnico:", tecnicos)
-            if tecnico_selecionado:
-                tecnico_info = next((t for t in BASE_COLABORADORES if t["Colaborador"] == tecnico_selecionado), None)
-                if tecnico_info:
-                    st.subheader(f"Informações do Técnico: {tecnico_info['Colaborador']}")
-                    col1, col2, col3 = st.columns(3)
-                    with col1:
-                        st.info(f"**Classificação:** {tecnico_info['Classificação']}")
-                    with col2:
-                        st.info(f"**Unidade:** {tecnico_info['Unidades']}")
-                    with col3:
-                        telefone = tecnico_info['Telefone']
-                        if telefone:
-                            telefone_limpo = re.sub(r'\D', '', telefone)
-                            whatsapp_link = f"https://wa.me/{telefone_limpo}" if telefone_limpo else "#"
-                            st.info(f"**Telefone:** [{telefone}]({whatsapp_link})")
-                        else:
-                            st.info("**Telefone:** Não informado")
-                    st.info(f"**Email:** {tecnico_info['Email']}")
-
-                if not df_treinamentos.empty:
-                    treinamentos_tecnico = df_treinamentos[df_treinamentos["Técnico"] == tecnico_selecionado]
-                    if not treinamentos_tecnico.empty:
-                        treinamentos_ok = treinamentos_tecnico[treinamentos_tecnico["Situação"] == "OK"]
-                        treinamentos_pendentes = treinamentos_tecnico[treinamentos_tecnico["Situação"] == "PENDENTE"]
-
-                        if not treinamentos_ok.empty:
-                            st.subheader("✅ Treinamentos Concluídos (OK)")
-                            st.dataframe(treinamentos_ok)
-                        if not treinamentos_pendentes.empty:
-                            st.subheader("⏳ Treinamentos Pendentes")
-                            st.dataframe(treinamentos_pendentes)
-
-                        col_stat1, col_stat2, col_stat3 = st.columns(3)
-                        with col_stat1:
-                            st.metric("Total", len(treinamentos_tecnico))
-                        with col_stat2:
-                            st.metric("Concluídos", len(treinamentos_ok))
-                        with col_stat3:
-                            st.metric("Pendentes", len(treinamentos_pendentes))
+        st.header("👨‍🔧 Consulta por Técnicos")
+        tecnicos = [t["Colaborador"] for t in BASE_COLABORADORES]
+        tecnico_selecionado = st.selectbox("Selecione o técnico:", tecnicos)
+        
+        if tecnico_selecionado:
+            tecnico_info = next((t for t in BASE_COLABORADORES if t["Colaborador"] == tecnico_selecionado), None)
+            if tecnico_info:
+                # Nome do técnico mais destacado
+                st.markdown(f"<h2 style='color: #1f77b4;'>{tecnico_info['Colaborador']}</h2>", unsafe_allow_html=True)
+                
+                col1, col2, col3 = st.columns(3)
+                with col1:
+                    st.info(f"**Classificação:** {tecnico_info['Classificação']}")
+                with col2:
+                    st.info(f"**Unidade:** {tecnico_info['Unidades']}")
+                with col3:
+                    telefone = tecnico_info['Telefone']
+                    if telefone:
+                        telefone_limpo = re.sub(r'\D', '', telefone)
+                        whatsapp_link = f"https://wa.me/{telefone_limpo}" if telefone_limpo else "#"
+                        st.info(f"**Telefone:** [{telefone}]({whatsapp_link})")
                     else:
-                        st.warning("Nenhum treinamento encontrado para este técnico.")
-                else:
-                    st.warning("Nenhum treinamento cadastrado no sistema.")
+                        st.info("**Telefone:** Não informado")
+                st.info(f"**Email:** {tecnico_info['Email']}")
 
-        else:  # Categoria
-            categorias = list(BASE_CATEGORIA.keys())
-            categoria_selecionada = st.selectbox("Selecione a categoria:", categorias)
-            if categoria_selecionada and not df_treinamentos.empty:
+            if not df_treinamentos.empty:
+                treinamentos_tecnico = df_treinamentos[df_treinamentos["Técnico"] == tecnico_selecionado]
+                if not treinamentos_tecnico.empty:
+                    treinamentos_ok = treinamentos_tecnico[treinamentos_tecnico["Situação"] == "OK"]
+                    treinamentos_pendentes = treinamentos_tecnico[treinamentos_tecnico["Situação"] == "PENDENTE"]
+
+                    if not treinamentos_ok.empty:
+                        st.subheader("✅ Treinamentos Concluídos (OK)")
+                        st.dataframe(treinamentos_ok)
+                    if not treinamentos_pendentes.empty:
+                        st.subheader("⏳ Treinamentos Pendentes")
+                        st.dataframe(treinamentos_pendentes)
+
+                    col_stat1, col_stat2, col_stat3 = st.columns(3)
+                    with col_stat1:
+                        st.metric("Total", len(treinamentos_tecnico))
+                    with col_stat2:
+                        st.metric("Concluídos", len(treinamentos_ok))
+                    with col_stat3:
+                        st.metric("Pendentes", len(treinamentos_pendentes))
+                else:
+                    st.warning("Nenhum treinamento encontrado para este técnico.")
+            else:
+                st.warning("Nenhum treinamento cadastrado no sistema.")
+
+    # Consulta por Categoria
+    with tab2:
+        st.header("🔍 Consulta por Categoria")
+        categorias = list(BASE_CATEGORIA.keys())
+        categoria_selecionada = st.selectbox("Selecione a categoria:", categorias)
+        
+        if categoria_selecionada:
+            # Mostrar nível da categoria
+            nivel_categoria = CATEGORIA_NIVEIS.get(categoria_selecionada, "Nível não definido")
+            st.info(f"**Nível da Categoria {categoria_selecionada}:** {nivel_categoria}")
+            
+            if not df_treinamentos.empty:
                 treinamentos_categoria = df_treinamentos[df_treinamentos["Categoria"] == categoria_selecionada]
                 tecnicos_com_treinamento = treinamentos_categoria["Técnico"].unique().tolist()
                 todos_tecnicos = [t["Colaborador"] for t in BASE_COLABORADORES]
@@ -270,15 +415,54 @@ def main():
                 col1, col2 = st.columns(2)
                 with col1:
                     st.subheader("✅ Técnicos com Treinamento")
-                    for tecnico in tecnicos_com_treinamento:
-                        st.write(f"• {tecnico}")
+                    if tecnicos_com_treinamento:
+                        for tecnico in tecnicos_com_treinamento:
+                            st.markdown(f"• **{tecnico}**")
+                    else:
+                        st.write("Nenhum técnico com treinamento nesta categoria")
+                
                 with col2:
                     st.subheader("❌ Técnicos sem Treinamento")
-                    for tecnico in tecnicos_sem_treinamento:
-                        st.write(f"• {tecnico}")
+                    if tecnicos_sem_treinamento:
+                        for tecnico in tecnicos_sem_treinamento:
+                            st.markdown(f"• **{tecnico}**")
+                    else:
+                        st.write("Todos os técnicos possuem treinamento nesta categoria")
+
+    # Consulta por Tipo
+    with tab3:
+        st.header("📋 Consulta por Tipo de Treinamento")
+        tipos_treinamento = list(MATRIZ_TREINAMENTOS.keys())
+        tipo_selecionado = st.selectbox("Selecione o tipo de treinamento:", tipos_treinamento)
+        
+        if tipo_selecionado:
+            info_tipo = MATRIZ_TREINAMENTOS.get(tipo_selecionado, {})
+            nivel = info_tipo.get("nível", "Nível não definido")
+            status_list = info_tipo.get("status", [])
+            
+            st.info(f"**Nível do Treinamento:** {nivel}")
+            
+            if status_list:
+                st.subheader("📝 Status do Treinamento")
+                for status in status_list:
+                    st.markdown(f"• {status}")
+            
+            # Mostrar técnicos que possuem este treinamento
+            if not df_treinamentos.empty:
+                tecnicos_com_treinamento = df_treinamentos[
+                    (df_treinamentos["Tipo de Treinamento"] == tipo_selecionado) & 
+                    (df_treinamentos["Situação"] == "OK")
+                ]["Técnico"].unique().tolist()
+                
+                if tecnicos_com_treinamento:
+                    st.subheader("👨‍🔧 Técnicos Qualificados")
+                    for tecnico in tecnicos_com_treinamento:
+                        st.markdown(f"• **{tecnico}**")
+                else:
+                    st.info("Nenhum técnico concluiu este treinamento ainda")
 
     # Cadastro
-    with tab2:
+    with tab4:
         st.header("➕ Cadastro de Novo Treinamento")
         
         # Usar session_state para controlar o estado do formulário
@@ -294,7 +478,7 @@ def main():
         with st.form("form_cadastro", clear_on_submit=True):
             col1, col2 = st.columns(2)
             with col1:
-                treinamento = st.selectbox("Treinamento*", BASE_TREINAMENTO)
+                treinamento = st.selectbox("Treinamento*", BASE_TREINamento)
                 classificacao = st.selectbox("Classificação*", BASE_FUNCAO)
                 situacao = st.selectbox("Situação*", BASE_SITUACAO)
                 categoria = st.selectbox("Categoria*", list(BASE_CATEGORIA.keys()))
@@ -329,7 +513,7 @@ def main():
                     st.error("❌ Erro ao cadastrar treinamento.")
 
     # Atualização
-    with tab3:
+    with tab5:
         st.header("✏️ Atualização de Treinamentos")
         if not df_treinamentos.empty:
             treinamentos_lista = df_treinamentos.apply(
@@ -371,7 +555,7 @@ def main():
             st.warning("Nenhum treinamento cadastrado.")
 
     # Exclusão
-    with tab4:
+    with tab6:
         st.header("🗑️ Exclusão de Treinamentos")
         if not df_treinamentos.empty:
             senha = st.text_input("Digite a senha para acesso:", type="password")
